@@ -58,6 +58,7 @@ pub fn MemoryLog::input_bytes(Self) -> Int
 pub fn MemoryLog::new(limits? : Limits) -> Self
 pub fn MemoryLog::size(Self) -> UInt64
 pub fn MemoryLog::snapshot(Self) -> Snapshot
+pub fn MemoryLog::snapshot_at(Self, UInt64) -> Snapshot raise AppendError
 
 pub struct Snapshot {
   // private fields
