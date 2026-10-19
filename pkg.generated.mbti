@@ -16,6 +16,8 @@ pub fn hash_node(Hash32, Hash32) -> Hash32
 
 pub fn tree_root(Array[Bytes], limits? : Limits) -> Hash32 raise AppendError
 
+pub fn verify_consistency(Snapshot, Snapshot, ConsistencyProof) -> Verification
+
 pub fn verify_inclusion(Snapshot, UInt64, Bytes, InclusionProof) -> Verification
 
 // Errors
