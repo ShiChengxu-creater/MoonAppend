@@ -43,6 +43,17 @@ pub fn Hash32::hex(Self) -> String
 pub fn Hash32::not_equal(Self, Self) -> Bool
 pub fn Hash32::to_repr(Self) -> @debug.Repr
 
+pub struct InclusionProof {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn InclusionProof::equal(Self, Self) -> Bool
+pub fn InclusionProof::leaf_index(Self) -> UInt64
+pub fn InclusionProof::new(UInt64, UInt64, Array[Hash32]) -> Self raise AppendError
+pub fn InclusionProof::nodes(Self) -> Array[Hash32]
+pub fn InclusionProof::not_equal(Self, Self) -> Bool
+pub fn InclusionProof::to_repr(Self) -> @debug.Repr
+pub fn InclusionProof::tree_size(Self) -> UInt64
+
 pub struct Limits {
   // private fields
 }
@@ -56,6 +67,7 @@ pub struct MemoryLog {
 pub fn MemoryLog::append(Self, Bytes) -> UInt64 raise AppendError
 pub fn MemoryLog::input_bytes(Self) -> Int
 pub fn MemoryLog::new(limits? : Limits) -> Self
+pub fn MemoryLog::prove_inclusion(Self, UInt64, UInt64) -> InclusionProof raise AppendError
 pub fn MemoryLog::size(Self) -> UInt64
 pub fn MemoryLog::snapshot(Self) -> Snapshot
 pub fn MemoryLog::snapshot_at(Self, UInt64) -> Snapshot raise AppendError
