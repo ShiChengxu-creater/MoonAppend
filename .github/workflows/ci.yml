@@ -1,0 +1,36 @@
+name: Initial acceptance
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  core:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [native, wasm-gc, js]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned MoonBit
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location https://cli.moonbitlang.com/install/unix.sh -o /tmp/install-moonbit.sh
+          bash /tmp/install-moonbit.sh '0.10.14+7d59c7ec9'
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Verify toolchain
+        run: |
+          moon version --all
+          moonc -v | grep -F 'v0.10.14+7d59c7ec9'
+      - run: moon update
+      - run: moon fmt --check
+      - run: moon check --target ${{ matrix.target }} --deny-warn
+      - run: moon build --target ${{ matrix.target }} --deny-warn
+      - run: moon test --target ${{ matrix.target }} --deny-warn

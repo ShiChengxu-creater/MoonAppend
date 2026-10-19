@@ -1,0 +1,7 @@
+/_build/
+/.mooncakes/
+/.moon-lock
+/target/
+/artifacts/
+/tools/__pycache__/
+/.tools/
