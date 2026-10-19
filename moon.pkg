@@ -1,3 +1,4 @@
 import {
   "moonbitlang/x/crypto",
-} for "test"
+  "moonbitlang/core/debug",
+}

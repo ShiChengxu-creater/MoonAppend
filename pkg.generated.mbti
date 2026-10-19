@@ -1,11 +1,43 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "ShiChengxu/moonappend"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
+pub fn empty_root() -> Hash32
+
+pub fn hash_leaf(Bytes) -> Hash32
+
+pub fn hash_node(Hash32, Hash32) -> Hash32
 
 // Errors
+pub(all) suberror AppendError {
+  InvalidHashLength(Int)
+  InvalidHex
+  InvalidSize
+  InvalidIndex
+  InvalidLimits
+  LeafLimit
+  ByteLimit
+  InvalidProofLength
+} derive(Eq, @debug.Debug)
+pub fn AppendError::equal(Self, Self) -> Bool
+pub fn AppendError::not_equal(Self, Self) -> Bool
+pub fn AppendError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
+pub struct Hash32 {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn Hash32::bytes(Self) -> Bytes
+pub fn Hash32::equal(Self, Self) -> Bool
+pub fn Hash32::from_bytes(Bytes) -> Self raise AppendError
+pub fn Hash32::from_hex(String) -> Self raise AppendError
+pub fn Hash32::hex(Self) -> String
+pub fn Hash32::not_equal(Self, Self) -> Bool
+pub fn Hash32::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 
