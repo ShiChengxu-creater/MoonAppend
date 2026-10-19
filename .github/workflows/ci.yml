@@ -58,6 +58,7 @@ jobs:
           moon info
           moon fmt --check
           git diff --exit-code
+          test -z "$(git ls-files --others --exclude-standard)"
       - uses: actions/upload-artifact@v4
         with:
           name: reference-${{ matrix.target }}
