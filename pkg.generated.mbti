@@ -6,6 +6,8 @@ import {
 }
 
 // Values
+pub const MAX_TREE_SIZE : UInt64 = 9223372036854775807
+
 pub fn empty_root() -> Hash32
 
 pub fn hash_leaf(Bytes) -> Hash32
@@ -38,6 +40,23 @@ pub fn Hash32::from_hex(String) -> Self raise AppendError
 pub fn Hash32::hex(Self) -> String
 pub fn Hash32::not_equal(Self, Self) -> Bool
 pub fn Hash32::to_repr(Self) -> @debug.Repr
+
+pub struct Limits {
+  // private fields
+}
+pub fn Limits::max_leaves(Self) -> Int
+pub fn Limits::max_total_bytes(Self) -> Int
+pub fn Limits::new(max_leaves? : Int, max_total_bytes? : Int) -> Self raise AppendError
+
+pub struct Snapshot {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn Snapshot::equal(Self, Self) -> Bool
+pub fn Snapshot::new(UInt64, Hash32) -> Self raise AppendError
+pub fn Snapshot::not_equal(Self, Self) -> Bool
+pub fn Snapshot::root(Self) -> Hash32
+pub fn Snapshot::size(Self) -> UInt64
+pub fn Snapshot::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 
