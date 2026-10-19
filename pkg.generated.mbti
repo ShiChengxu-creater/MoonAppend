@@ -34,6 +34,17 @@ pub fn AppendError::not_equal(Self, Self) -> Bool
 pub fn AppendError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
+pub struct ConsistencyProof {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn ConsistencyProof::equal(Self, Self) -> Bool
+pub fn ConsistencyProof::new(UInt64, UInt64, Array[Hash32]) -> Self raise AppendError
+pub fn ConsistencyProof::new_size(Self) -> UInt64
+pub fn ConsistencyProof::nodes(Self) -> Array[Hash32]
+pub fn ConsistencyProof::not_equal(Self, Self) -> Bool
+pub fn ConsistencyProof::old_size(Self) -> UInt64
+pub fn ConsistencyProof::to_repr(Self) -> @debug.Repr
+
 pub struct Hash32 {
   // private fields
 } derive(Eq, @debug.Debug)
@@ -69,6 +80,7 @@ pub struct MemoryLog {
 pub fn MemoryLog::append(Self, Bytes) -> UInt64 raise AppendError
 pub fn MemoryLog::input_bytes(Self) -> Int
 pub fn MemoryLog::new(limits? : Limits) -> Self
+pub fn MemoryLog::prove_consistency(Self, UInt64, UInt64) -> ConsistencyProof raise AppendError
 pub fn MemoryLog::prove_inclusion(Self, UInt64, UInt64) -> InclusionProof raise AppendError
 pub fn MemoryLog::size(Self) -> UInt64
 pub fn MemoryLog::snapshot(Self) -> Snapshot
