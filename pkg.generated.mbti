@@ -50,6 +50,15 @@ pub fn Limits::max_leaves(Self) -> Int
 pub fn Limits::max_total_bytes(Self) -> Int
 pub fn Limits::new(max_leaves? : Int, max_total_bytes? : Int) -> Self raise AppendError
 
+pub struct MemoryLog {
+  // private fields
+}
+pub fn MemoryLog::append(Self, Bytes) -> UInt64 raise AppendError
+pub fn MemoryLog::input_bytes(Self) -> Int
+pub fn MemoryLog::new(limits? : Limits) -> Self
+pub fn MemoryLog::size(Self) -> UInt64
+pub fn MemoryLog::snapshot(Self) -> Snapshot
+
 pub struct Snapshot {
   // private fields
 } derive(Eq, @debug.Debug)
