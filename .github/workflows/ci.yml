@@ -15,9 +15,18 @@ jobs:
         target: [native, wasm-gc, js]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.2'
+          cache: false
       - name: Install pinned MoonBit
         shell: bash
         run: |
@@ -34,3 +43,22 @@ jobs:
       - run: moon check --target ${{ matrix.target }} --deny-warn
       - run: moon build --target ${{ matrix.target }} --deny-warn
       - run: moon test --target ${{ matrix.target }} --deny-warn
+      - name: Run memory-only scenario
+        run: moon run examples/memory --target ${{ matrix.target }}
+      - name: Independent Python and pinned Go comparisons
+        run: python tools/verify_reference.py --target ${{ matrix.target }} --go go --out artifacts/reference-${{ matrix.target }}.json
+      - name: Clean separate consumer
+        run: python tools/verify_consumer.py --target ${{ matrix.target }}
+      - name: Verify reference provenance and commit history
+        run: python tools/check_repository.py
+      - name: Reproduce generated Go vectors and public API
+        if: matrix.target == 'native'
+        run: |
+          python tools/generate_go_vectors.py --go go
+          moon info
+          moon fmt --check
+          git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reference-${{ matrix.target }}
+          path: artifacts/reference-${{ matrix.target }}.json
