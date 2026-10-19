@@ -1,0 +1,7 @@
+# github.com/transparency-dev/merkle v0.0.0-20261012081240-c39fbf350a40
+## explicit; go 1.22.7
+github.com/transparency-dev/merkle
+github.com/transparency-dev/merkle/compact
+github.com/transparency-dev/merkle/proof
+github.com/transparency-dev/merkle/rfc6962
+github.com/transparency-dev/merkle/testonly

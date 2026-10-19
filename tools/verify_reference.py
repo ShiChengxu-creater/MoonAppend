@@ -106,7 +106,7 @@ def main() -> None:
     report = {"target": args.target, "python_hashlib": counts, "negative_control": "passed"}
     if args.go:
         result = subprocess.run(
-            [args.go, "run", ".", "check"], cwd=ROOT / "tools/go_reference",
+            [args.go, "run", "-mod=vendor", ".", "check"], cwd=ROOT / "tools/go_reference",
             input=fixture, check=True, capture_output=True, encoding="utf-8",
         )
         report["go_reference"] = json.loads(result.stdout)

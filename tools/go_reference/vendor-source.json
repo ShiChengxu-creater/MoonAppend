@@ -1,0 +1,17 @@
+{
+  "commit": "c39fbf350a405f68571bf4c42a6a518eb0a46a4b",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/transparency-dev/merkle",
+  "sha256": {
+    "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "compact/nodes.go": "1fdda2ee5f8e7b52124febfda576a7e1be67f10b8c9ce11ccf73583d3c06a4cb",
+    "compact/range.go": "1d83f829df72a2deaae30693dcb8e73e911c994cab1468fb56f1651e1c535e8e",
+    "hasher.go": "2fa7da588db8a1f02b056659a0b28460e3dab4ab8c121142a7059937d9320145",
+    "proof/proof.go": "6ea313d27a48753ea41584b0de753a21dd6eea61ce7060cf8795c3d073f74e0e",
+    "proof/verify.go": "1cc3a995d81121d069fbf3dde41b6bcf7f1fe2e455ba15e3a7eb55834e11c476",
+    "rfc6962/rfc6962.go": "db68f5f7b8d86507738d5c2a87b3e84fcb403eda1048307d7491aec1f3aaf6cf",
+    "testonly/constants.go": "6faf1957b5727c99593412ca0375f7e1f90ba10d7747dc42624585f948da32a8",
+    "testonly/tree.go": "f1ded4340bf395acaaa8d727b28ca0ac83808d3260a909f24e1cc531d2ce6803"
+  },
+  "version": "v0.0.0-20261012081240-c39fbf350a40"
+}
