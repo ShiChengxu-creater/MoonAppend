@@ -1,0 +1,24 @@
+{
+  "module": "ShiChengxu/moonappend",
+  "version": "0.1.0-alpha.1",
+  "source": "Mooncakes registry",
+  "local_workspace_override": false,
+  "targets": {
+    "native": {
+      "check": "passed",
+      "build": "passed",
+      "public_api_tests": "1/1"
+    },
+    "wasm-gc": {
+      "check": "passed",
+      "build": "passed",
+      "public_api_tests": "1/1"
+    },
+    "js": {
+      "check": "passed",
+      "build": "passed",
+      "public_api_tests": "1/1"
+    }
+  },
+  "dependency_tree": "└─ ShiChengxu/moonappend -> ShiChengxu/moonappend@0.1.0-alpha.1\n   └─ moonbitlang/x -> moonbitlang/x@0.4.44"
+}

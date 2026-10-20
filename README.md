@@ -5,7 +5,8 @@ MoonBit 的追加日志 Merkle 证明库。核心能力是生成并验证两个�
 另提供单条记录的包含证明、增量追加和历史前缀快照。
 
 仓库：[ShiChengxu-creater/MoonAppend](https://github.com/ShiChengxu-creater/MoonAppend)。
-当前 `0.1.0-alpha.1` 用于初验，**尚未发布到 Mooncakes**。初验入口见
+当前预览版 [`0.1.0-alpha.1`](https://mooncakes.io/docs/ShiChengxu/moonappend@0.1.0-alpha.1)
+已于 2026-10-20 发布到 Mooncakes，并完成三后端独立安装验证。初验入口见
 [INITIAL_ACCEPTANCE.md](INITIAL_ACCEPTANCE.md)。
 
 ## 运行内存示例
@@ -36,8 +37,15 @@ changed leaf: ROOT_MISMATCH
 
 ## 库接口
 
-模块名为 `ShiChengxu/moonappend`。初验源码消费者通过本地 `moon.work` 使用，
-不能把尚未发布的 `moon add` 命令当作可用安装方式。公开 API 见
+模块名为 `ShiChengxu/moonappend`，在自己的 MoonBit 项目中安装预览版：
+
+```sh
+moon update
+moon add ShiChengxu/moonappend@0.1.0-alpha.1
+```
+
+在调用方的 `moon.pkg` 中添加 `import { "ShiChengxu/moonappend" }`。
+仓库的源码消费者另通过本地 `moon.work` 使用。公开 API 见
 [pkg.generated.mbti](pkg.generated.mbti)。
 
 ```moonbit
@@ -64,7 +72,7 @@ assert_true(@moonappend.verify_consistency(saved, grown, proof).is_verified())
 | 一致性证明生成与严格验证 | 已实现 |
 | 无文件系统示例、独立 Python/Go 对照、三后端 CI | 已提供；具体运行状态见初验记录 |
 | 严格 JSON、文件 CLI、其余场景集成 | 留待终验 |
-| Mooncakes 发布、从包仓库安装 | 尚未进行 |
+| Mooncakes 预览版发布、从包仓库安装 | alpha.1 已发布，三后端独立消费者验证通过 |
 
 树形和证明算法限定为 [RFC 9162 §2.1](https://www.rfc-editor.org/rfc/rfc9162.html#section-2.1)
 的 SHA-256 配置，不是完整 CT、X.509 或 SCT 实现。
@@ -98,6 +106,10 @@ python tools/verify_consumer.py --target wasm-gc
 
 CI 运行同样的检查、构建、测试、场景、独立对照和消费者测试，并检查生成向量可重复性、
 公开 API 无漂移、参考来源校验值与至少 10 次 Git 提交。
+
+验证已发布版本的安装与调用可执行 `python tools/verify_published.py`，它创建新消费者，
+从 Mooncakes 添加精确版本，在三个后端验证公开 API；没有本地工作区替代依赖。
+该检查需要已发布版本和网络，不属于上述源码 CI 的必跑步骤。
 
 ## 来源与许可
 

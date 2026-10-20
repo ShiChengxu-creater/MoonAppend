@@ -73,3 +73,21 @@ CI 会保存每个后端的 `reference-*` JSON 结果作为运行附件。
 独立消费者是干净源码消费者，不是从 Mooncakes 安装的证据。
 赛事最终要求的三个完整场景和人工撰写的一页申报书仍须在正式申报前完成。
 相邻项目检索见 [TOPIC_RECHECK.md](TOPIC_RECHECK.md)，不宣称绝无同类或保证通过赛事验收。
+
+## 2026-10-20：预览版发布与真实安装复验
+
+参赛者执行 `moon publish`，原目录及解压后的发布包检查通过，服务器返回 `200 OK`。
+随后通过 `tools/verify_published.py` 创建新的消费者，执行 `moon update` 和
+`moon add ShiChengxu/moonappend@0.1.0-alpha.1`，确实从包仓库安装了这个版本。
+消费者及其父目录没有 `moon.work`，未复制本仓库源码作为依赖。
+
+三个后端的检查、构建和 1 个公开 API 测试块均通过；测试包含正常追加一致性、
+历史包含、错误叶子拒绝及改写旧历史拒绝。依赖树确认版本为 `0.1.0-alpha.1`，
+运行时依赖为 `moonbitlang/x@0.4.44`。
+具体结果见 [registry-alpha.1.json](evidence/registry-alpha.1.json)。
+
+复验命令：`python tools/verify_published.py --version 0.1.0-alpha.1`。
+源码 CI 的 Git archive 消费者和这次包仓库安装复验分别记录，不能互相替代。
+当前只发布了 alpha 预览版；严格 JSON、文件 CLI、剩余场景和正式版 `0.1.0` 仍待完成。
+发布包中附带的文档是上传时的旧快照；本节及 GitHub README 是发布后的补充记录，
+本次没有重发或覆盖同一版本。
