@@ -12,6 +12,10 @@ extern "C" fn io_mkdir(path : Bytes) -> Int = "ma_mkdir"
 
 ///|
 #borrow(path)
+extern "C" fn io_exists(path : Bytes) -> Int = "ma_exists"
+
+///|
+#borrow(path)
 extern "C" fn io_open(path : Bytes, mode : Int) -> Int = "ma_open"
 
 ///|

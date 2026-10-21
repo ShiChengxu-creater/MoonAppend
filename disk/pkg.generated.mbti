@@ -9,6 +9,8 @@ import {
 // Values
 pub const MAX_DISK_LEAVES : UInt64 = 72057594037927935
 
+pub fn path_exists(String) -> Bool raise StorageError
+
 pub fn read_file(String, limit? : Int) -> Bytes raise
 
 pub fn write_new_file(String, Bytes) -> Unit raise

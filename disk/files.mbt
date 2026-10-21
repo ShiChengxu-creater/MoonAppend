@@ -1,4 +1,14 @@
 ///|
+/// Unicode-aware preflight; permission/lookup errors fail rather than mean absent.
+pub fn path_exists(path : String) -> Bool raise StorageError {
+  let result = io_exists(path_bytes(path))
+  if result < 0 {
+    raise StorageError("PATH_LOOKUP_FAILED")
+  }
+  result == 1
+}
+
+///|
 /// Bounded file input for interchange tools; no whole-file read before size check.
 pub fn read_file(path : String, limit? : Int = 16777216) -> Bytes raise Error {
   if limit < 0 || limit > 16777216 {

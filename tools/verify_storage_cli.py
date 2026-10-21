@@ -103,6 +103,15 @@ def main():
     assert json.loads(old.read_text())["root"] == root(entries[:8]).hex()
     assert json.loads(new.read_text())["root"] == root(entries).hex()
     assert json.loads(run("audit", log)) == json.loads(new.read_text())
+    saved_output = work / "快照.json"
+    assert run("snapshot", log, 13, "--out", saved_output) == ""
+    assert not saved_output.read_bytes().startswith(b"\xef\xbb\xbf")
+    assert json.loads(saved_output.read_text(encoding="utf-8")) == json.loads(new.read_text())
+    saved_bytes = saved_output.read_bytes()
+    run("snapshot", log, 13, "--out", saved_output, expected=2)
+    run("append", log, first, "--out", saved_output, expected=2)
+    assert saved_output.read_bytes() == saved_bytes
+    assert json.loads(run("audit", log)) == json.loads(new.read_text())
     proof = save("growth.json", run("consistency", log, 8, 13))
     run("verify-consistency", old, new, proof)
     wrong_old = json.loads(old.read_text())

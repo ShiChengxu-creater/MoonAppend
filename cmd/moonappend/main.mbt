@@ -22,12 +22,23 @@ fn records(path : String) -> Array[Bytes] raise Error {
 }
 
 ///|
-fn result(value : @tree.Verification) -> Unit {
+fn emit(value : String, destination : String?) -> Unit raise Error {
+  match destination {
+    None => println(value)
+    Some(path) => @disk.write_new_file(path, @utf8.encode(value + "\n"))
+  }
+}
+
+///|
+fn result(
+  value : @tree.Verification,
+  destination : String?,
+) -> Unit raise Error {
   let output : Json = {
     "status": value.code(),
     "verified": value.is_verified(),
   }
-  println(output.stringify())
+  emit(output.stringify(), destination)
   if !value.is_verified() {
     exit_process(1)
   }
@@ -41,31 +52,35 @@ fn require_args(args : Array[String], count : Int) -> Unit raise CliError {
 }
 
 ///|
-fn run(args : Array[String]) -> Unit raise Error {
+fn run(args : Array[String], destination : String?) -> Unit raise Error {
+  let display : (String) -> Unit raise Error = text => emit(text, destination)
   if args.length() == 1 || args[1] == "--help" {
-    println(
+    if destination is Some(_) {
+      raise CliError("HELP_HAS_NO_OUTPUT_FILE")
+    }
+    display(
       "MoonAppend 0.2.0-alpha.1 native CLI; all indices are zero-based, ranges are [start,end)",
     )
-    println(
+    display(
       "init DIR | append DIR RECORDS.json | snapshot DIR SIZE | audit DIR",
     )
-    println(
+    display(
       "inclusion DIR INDEX SIZE | consistency DIR OLD_SIZE NEW_SIZE | range DIR START END SIZE",
     )
-    println(
+    display(
       "export DIR START END | verify-range TRUSTED.json START RECORDS.json PROOF.json",
     )
-    println(
+    display(
       "verify-inclusion TRUSTED.json INDEX RECORDS.json PROOF.json | verify-consistency OLD.json NEW.json PROOF.json",
     )
-    println(
+    display(
       "shard START RECORDS.json OUT.bin | merge LEFT.bin RIGHT.bin OUT.bin | resume STATE.bin RECORDS.json OUT.bin | root STATE.bin",
     )
-    println(
+    display(
       "generate DIR COUNT BATCH_SIZE (deterministic fixture; COUNT <= 1000000)",
     )
-    println(
-      "Snapshots/proofs/records are JSON; checkpoint commands report status text. Binary outputs refuse existing paths.",
+    display(
+      "Use --out NEW_FILE for UTF-8 output; existing paths are refused. Checkpoint commands report status text.",
     )
     return
   }
@@ -74,33 +89,33 @@ fn run(args : Array[String]) -> Unit raise Error {
       require_args(args, 3)
       let log = @disk.DiskLog::create(args[2])
       defer log.close()
-      println(@wire.encode_snapshot(log.snapshot()))
+      display(@wire.encode_snapshot(log.snapshot()))
     }
     "append" => {
       require_args(args, 4)
       let entries = records(args[3])
       let log = @disk.DiskLog::open(args[2])
       defer log.close()
-      println(@wire.encode_snapshot(log.append_batch(entries)))
+      display(@wire.encode_snapshot(log.append_batch(entries)))
     }
     "snapshot" => {
       require_args(args, 4)
       let log = @disk.DiskLog::open(args[2])
       defer log.close()
-      println(@wire.encode_snapshot(log.snapshot_at(@wire.parse_size(args[3]))))
+      display(@wire.encode_snapshot(log.snapshot_at(@wire.parse_size(args[3]))))
     }
     "audit" => {
       require_args(args, 3)
       let log = @disk.DiskLog::open(args[2])
       defer log.close()
       let head = log.audit()
-      println(@wire.encode_snapshot(head))
+      display(@wire.encode_snapshot(head))
     }
     "inclusion" => {
       require_args(args, 5)
       let log = @disk.DiskLog::open(args[2])
       defer log.close()
-      println(
+      display(
         @wire.encode_inclusion(
           log.prove_inclusion(
             @wire.parse_size(args[3]),
@@ -113,7 +128,7 @@ fn run(args : Array[String]) -> Unit raise Error {
       require_args(args, 5)
       let log = @disk.DiskLog::open(args[2])
       defer log.close()
-      println(
+      display(
         @wire.encode_consistency(
           log.prove_consistency(
             @wire.parse_size(args[3]),
@@ -126,7 +141,7 @@ fn run(args : Array[String]) -> Unit raise Error {
       require_args(args, 6)
       let log = @disk.DiskLog::open(args[2])
       defer log.close()
-      println(
+      display(
         @wire.encode_range(
           log.prove_range(
             @wire.parse_size(args[3]),
@@ -159,7 +174,7 @@ fn run(args : Array[String]) -> Unit raise Error {
       if @utf8.encode(encoded).length() > 16777216 {
         raise CliError("EXPORT_BYTE_LIMIT")
       }
-      println(encoded)
+      display(encoded)
     }
     "verify-range" => {
       require_args(args, 6)
@@ -170,6 +185,7 @@ fn run(args : Array[String]) -> Unit raise Error {
           records(args[4]),
           @wire.decode_range(read_text(args[5])),
         ),
+        destination,
       )
     }
     "verify-inclusion" => {
@@ -185,6 +201,7 @@ fn run(args : Array[String]) -> Unit raise Error {
           entries[0],
           @wire.decode_inclusion(read_text(args[5])),
         ),
+        destination,
       )
     }
     "verify-consistency" => {
@@ -195,6 +212,7 @@ fn run(args : Array[String]) -> Unit raise Error {
           snapshot(args[3]),
           @wire.decode_consistency(read_text(args[4])),
         ),
+        destination,
       )
     }
     "shard" => {
@@ -204,7 +222,7 @@ fn run(args : Array[String]) -> Unit raise Error {
         records(args[3]),
       )
       @disk.write_new_file(args[4], state.checkpoint())
-      println("SHARD_WRITTEN")
+      display("SHARD_WRITTEN")
     }
     "merge" => {
       require_args(args, 5)
@@ -216,7 +234,7 @@ fn run(args : Array[String]) -> Unit raise Error {
       )
       let merged = left.merge(right)
       @disk.write_new_file(args[4], merged.checkpoint())
-      println("SHARDS_MERGED")
+      display("SHARDS_MERGED")
     }
     "resume" => {
       require_args(args, 5)
@@ -227,11 +245,11 @@ fn run(args : Array[String]) -> Unit raise Error {
         state = state.append(entry)
       }
       @disk.write_new_file(args[4], state.checkpoint())
-      println("STATE_RESUMED")
+      display("STATE_RESUMED")
     }
     "root" => {
       require_args(args, 3)
-      println(
+      display(
         @wire.encode_snapshot(
           @tree.CompactRange::restore(@disk.read_file(args[2], limit=4096)).snapshot(),
         ),
@@ -252,7 +270,7 @@ fn run(args : Array[String]) -> Unit raise Error {
         ignore(log.append_batch(Array::make(n.to_int(), b"benchmark-record")))
         remaining = remaining - n
       }
-      println(@wire.encode_snapshot(log.snapshot()))
+      display(@wire.encode_snapshot(log.snapshot()))
     }
     _ => raise CliError("UNKNOWN_COMMAND: use --help")
   }
@@ -260,7 +278,20 @@ fn run(args : Array[String]) -> Unit raise Error {
 
 ///|
 fn main {
-  run(@env.args()) catch {
+  let args = @env.args()
+  let destination = if args.length() >= 4 && args[args.length() - 2] == "--out" {
+    let path = args.pop().unwrap()
+    ignore(args.pop())
+    Some(path)
+  } else {
+    None
+  }
+  try {
+    if destination is Some(path) && @disk.path_exists(path) {
+      raise CliError("OUTPUT_EXISTS")
+    }
+    run(args, destination)
+  } catch {
     error => {
       eprintln(error)
       exit_process(2)

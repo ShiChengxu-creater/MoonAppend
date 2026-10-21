@@ -40,6 +40,22 @@ MOONBIT_FFI_EXPORT int ma_mkdir(moonbit_bytes_t path) {
 #endif
 }
 
+MOONBIT_FFI_EXPORT int ma_exists(moonbit_bytes_t path) {
+#ifdef _WIN32
+  wchar_t *w = ma_wide((char *)path);
+  if (!w) return -1;
+  DWORD attributes = GetFileAttributesW(w);
+  DWORD error = GetLastError();
+  free(w);
+  if (attributes != INVALID_FILE_ATTRIBUTES) return 1;
+  return error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND ? 0 : -1;
+#else
+  struct stat st;
+  if (!lstat((char *)path, &st)) return 1;
+  return errno == ENOENT || errno == ENOTDIR ? 0 : -1;
+#endif
+}
+
 /* mode 0 read; 1 exclusive creation; 2 existing update; 3 temp truncate;
  * 4 persistent lock file plus a process-lifetime, nonblocking OS lock. */
 MOONBIT_FFI_EXPORT int ma_open(moonbit_bytes_t path, int mode) {
