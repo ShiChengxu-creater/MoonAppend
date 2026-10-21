@@ -2,7 +2,15 @@
 
 MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节点，支持进程重启后继续追加、历史快照、批量提交，以及包含、一致性和连续区间证明。还提供可合并的 compact range，用少量哈希完成分片构树和状态恢复。
 
-仓库当前开发版本为 **0.2.0，尚未发布**。Mooncakes 上的 [0.1.0-alpha.1](https://mooncakes.io/docs/ShiChengxu/moonappend@0.1.0-alpha.1) 只有原先的基础内存功能。以下扩展命令需要本仓库源码；正式申报前仍需参赛者核对材料。
+当前版本 **[0.2.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.2.0)** 已发布到 Mooncakes，并通过三个后端的独立安装验证。旧版 `0.1.0-alpha.1` 只有基础内存功能。命令行工作流按下文从源码运行；正式申报前仍需参赛者核对材料。
+
+在调用方模块中安装：
+
+```sh
+moon add ShiChengxu/moonappend@0.2.0
+```
+
+注册表复验包括 native 3 个、wasm-gc 和 JS 各 2 个公开 API 测试，覆盖新增的区间、JSON、分片状态及 native 磁盘重开。结果见 [发布验证记录](docs/evidence/registry-0.2.0.json)。
 
 ## 模块
 

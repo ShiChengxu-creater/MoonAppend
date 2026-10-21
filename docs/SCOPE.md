@@ -7,9 +7,10 @@ file-backed logs with recovery, audit and CLI workflows.
 
 Portable core and wire support native, wasm-gc and JS. Disk and CLI are native.
 The three workflows are persistent events, interval receipts and shard merge/resume.
-Current source version is 0.2.0, unpublished; registry 0.1.0-alpha.1 is the
-earlier limited-memory release. New-release publication and registry installation
-must be recorded separately from source-archive consumer tests.
+Version 0.2.0 is published on Mooncakes. A fresh registry consumer, without a local
+workspace override, passed check/build and 3 native / 2 wasm-gc / 2 JS public API
+tests. Evidence is in evidence/registry-0.2.0.json, separate from source-archive
+consumer tests. Version 0.1.0-alpha.1 is the earlier limited-memory release.
 
 No server, signing, multiwriter transactions, sparse trees, consensus or proof of event truth.
 Never classify a self-reported root as an authenticated root. The final acceptance

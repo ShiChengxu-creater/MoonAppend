@@ -46,4 +46,6 @@
 六阶段提交故障和真实进程终止恢复，以及 7 万/14 万叶实际构树。
 提交 `41f99e2` 的三后端远程 CI 已通过，实际发布 ZIP 的三个后端独立消费者也通过。
 详细证据和边界见 EXTENDED_VALIDATION.md、STORAGE.md、SCENARIOS.md。
-源码已进入 0.2.0；该版本尚未发布，正式复审材料需在发布及安装复验后更新。
+0.2.0 已发布到 Mooncakes，并完成无本地工作区替代的独立安装复验：native 3/3、
+wasm-gc 和 JS 各 2/2，三个后端 check/build 均通过。证据见 docs/evidence/registry-0.2.0.json。
+申报书和复审说明已同步发布状态，正式复审材料仍由参赛者核对后提交。
