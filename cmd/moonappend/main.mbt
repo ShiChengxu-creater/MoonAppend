@@ -65,7 +65,7 @@ fn run(args : Array[String]) -> Unit raise Error {
       "generate DIR COUNT BATCH_SIZE (deterministic fixture; COUNT <= 1000000)",
     )
     println(
-      "JSON to stdout; redirect to a new file using your shell. Binary outputs refuse existing paths.",
+      "Snapshots/proofs/records are JSON; checkpoint commands report status text. Binary outputs refuse existing paths.",
     )
     return
   }

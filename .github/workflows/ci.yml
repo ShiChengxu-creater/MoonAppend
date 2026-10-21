@@ -1,4 +1,4 @@
-name: Initial acceptance
+name: Merkle log validation
 on:
   push:
   pull_request:
@@ -49,6 +49,11 @@ jobs:
         run: python tools/verify_reference.py --target ${{ matrix.target }} --go go --out artifacts/reference-${{ matrix.target }}.json
       - name: Clean separate consumer
         run: python tools/verify_consumer.py --target ${{ matrix.target }}
+      - name: Independent compact ranges and interval proofs
+        run: python tools/verify_expanded_reference.py --target ${{ matrix.target }} --go go --out artifacts/expanded-${{ matrix.target }}.json
+      - name: Native storage workflows crash recovery and scale
+        if: matrix.target == 'native'
+        run: python tools/verify_storage_cli.py --out artifacts/storage-cli-linux.json
       - name: Verify reference provenance and commit history
         run: python tools/check_repository.py
       - name: Reproduce generated Go vectors and public API
@@ -62,4 +67,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: reference-${{ matrix.target }}
-          path: artifacts/reference-${{ matrix.target }}.json
+          path: |
+            artifacts/reference-${{ matrix.target }}.json
+            artifacts/expanded-${{ matrix.target }}.json
+            artifacts/storage-cli-linux.json

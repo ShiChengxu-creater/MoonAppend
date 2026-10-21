@@ -108,3 +108,28 @@ test "memory batch validates before any mutation" {
   assert_eq(log.snapshot(), saved)
   assert_eq(log.append_batch([]), saved)
 }
+
+///|
+test "shard positions retain 53 and 63 bits and reject growth beyond maximum" {
+  let start = 9007199254740992UL
+  let left = @moonappend.CompactRange::from_leaves(start, [b"a", b"b"])
+  let right = @moonappend.CompactRange::from_leaves(start + 2UL, [b"c"])
+  let merged = left.merge(right)
+  assert_eq(
+    merged,
+    @moonappend.CompactRange::from_leaves(start, [b"a", b"b", b"c"]),
+  )
+  assert_eq(@moonappend.CompactRange::restore(merged.checkpoint()), merged)
+  let last = @moonappend.CompactRange::from_leaves(
+    @moonappend.MAX_TREE_SIZE - 1UL,
+    [b"last"],
+  )
+  assert_eq(last.end(), @moonappend.MAX_TREE_SIZE)
+  let rejected = try {
+    ignore(last.append(b"overflow"))
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(rejected)
+}
