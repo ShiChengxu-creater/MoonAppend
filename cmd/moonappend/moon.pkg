@@ -1,0 +1,15 @@
+import {
+  "ShiChengxu/moonappend" @tree,
+  "ShiChengxu/moonappend/disk",
+  "ShiChengxu/moonappend/wire",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/env",
+}
+
+pkgtype(kind: "executable")
+
+supported_targets = "native"
+
+options(
+  "native-stub": [ "process.c" ],
+)

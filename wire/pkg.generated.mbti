@@ -25,7 +25,7 @@ pub fn encode_inclusion(@moonappend.InclusionProof) -> String
 
 pub fn encode_range(@moonappend.RangeProof) -> String
 
-pub fn encode_records(Array[Bytes]) -> String
+pub fn encode_records(Array[Bytes]) -> String raise WireError
 
 pub fn encode_snapshot(@moonappend.Snapshot) -> String
 

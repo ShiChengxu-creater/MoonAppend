@@ -95,7 +95,7 @@ fn parse(
         let items : Array[Json] = []
         if cursor.peek() != 93 {
           while true {
-            if items.length() >= 65536 {
+            if items.length() >= (if key == "entries" { 4096 } else { 252 }) {
               raise WireError("ARRAY_LIMIT")
             }
             items.push(Json::string(cursor.string()))
@@ -301,7 +301,17 @@ pub fn decode_consistency(input : String) -> @tree.ConsistencyProof raise Error 
 }
 
 ///|
-pub fn encode_records(entries : Array[Bytes]) -> String {
+pub fn encode_records(entries : Array[Bytes]) -> String raise WireError {
+  if entries.length() > 4096 {
+    raise WireError("BATCH_LIMIT")
+  }
+  let mut total = 0
+  for entry in entries {
+    if entry.length() > 1048576 || entry.length() > 8372224 - total {
+      raise WireError("RECORD_BYTE_LIMIT")
+    }
+    total = total + entry.length()
+  }
   encode("records", {
     "entries": Json::array(entries.map(e => Json::string(bytes_hex(e)))),
   })
