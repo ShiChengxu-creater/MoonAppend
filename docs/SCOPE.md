@@ -1,15 +1,16 @@
-# Initial acceptance boundary
+# Scope after the 2026-10-21 review response
 
-Required: SHA-256 domain-separated ordered trees, incremental append, historical
-snapshots, inclusion proof generation/verification, consistency proof
-generation/verification, independent reference checks, one memory-only example,
-and the same core tests on native, wasm-gc and JavaScript.
+Implemented: RFC SHA-256 trees, incremental and atomic batch append, historical
+snapshots, inclusion/consistency/interval proofs, mergeable compact ranges and
+checkpoints, storage reader callbacks, strict JSON interchange, and native
+file-backed logs with recovery, audit and CLI workflows.
 
-Deferred to final acceptance: strict JSON interchange, file CLI, the remaining
-scenario integrations and final 0.1.0 publication/install verification.
-The alpha.1 preview was published on 2026-10-20; a fresh registry consumer passed
-public API checks, builds and tests on native, wasm-gc and JavaScript.
+Portable core and wire support native, wasm-gc and JS. Disk and CLI are native.
+The three workflows are persistent events, interval receipts and shard merge/resume.
+Current source version is 0.2.0-alpha.1, unpublished; registry 0.1.0-alpha.1 is the
+earlier limited-memory release. New-release publication and registry installation
+must be recorded separately from source-archive consumer tests.
 
-No server, signing, persistence, sparse trees, consensus or proof of event truth.
+No server, signing, multiwriter transactions, sparse trees, consensus or proof of event truth.
 Never classify a self-reported root as an authenticated root. The final acceptance
 entry must distinguish local tests, commits, pushes, remote CI and publication.

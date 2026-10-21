@@ -17,7 +17,7 @@ MemoryLog 每一层只存完整且对齐的子树。追加第 i 个叶子时沿�
   保守上界 O(log² N)，不宣称每个生成操作都达到 O(log N)。
 - 验证处理 O(log N) 证明节点；包含验证还需哈希输入叶子。
 
-生成器绝对上限 65,536 叶、64 MiB 累计输入；配置只可收紧。
+MemoryLog 与一次性 tree_root 上限 65,536 叶、64 MiB 累计输入；配置只可收紧。
 追加失败在状态变更前返回。上限不包含调用方自己的载荷数组、哈希依赖内部临时分配、
 GC 和进程其他对象，不是 RSS 上限。当前批量 tree_root 需要额外 O(N) 叶哈希数组。
 
@@ -34,7 +34,9 @@ GC 和进程其他对象，不是 RSS 上限。当前批量 tree_root 需要额�
 
 稳定结果码：`VERIFIED`、`NO_PRIOR_HISTORY`、`METADATA_MISMATCH`、
 `INDEX_OUT_OF_RANGE`、`LEAF_TOO_LARGE`、`SIZE_REVERSED`、`PATH_LENGTH`、`ROOT_MISMATCH`。
-当前 alpha 没有最终 JSON 协议或 native 文件 CLI；examples/interop 的 TSV 仅是验收夹具输出。
+0.2 提供 wire JSON 包和 native 文件 CLI；examples/interop 的 TSV 仍仅是参考对照夹具。
+新增 RangeProof 使用两侧 canonical compact gaps，共享边界节点来验证整个连续区间，
+与 RFC 的单叶路径格式分别标识。详见 FORMAT.md。
 
 ## 信任含义
 
@@ -43,6 +45,16 @@ GC 和进程其他对象，不是 RSS 上限。当前批量 tree_root 需要额�
 只改变相同字节记录的身份标签但不改变哈希输入，不可能靠本库发现。
 应用要固定记录编码与顺序、保留可信旧快照，并独立处理签名、存储和并发。
 
-后续严格 JSON 将把大小编码为十进制字符串；初验核心接口不经过 Double。
+wire JSON 把大小编码为十进制字符串；核心接口不经过 Double。
 生成器与验证器使用同一种有序树配置；Bitcoin 奇数叶复制式树、稀疏状态树和自定义哈希树
 不能直接混用证明。
+
+## 0.2 的存储与构树组件
+
+CompactRange 保存 `[start,end)` 的规范完整子树集合，合并仅允许相邻区间。
+流式构树只保留 O(log n) 个哈希；保存及恢复前沿不能恢复已经丢弃的原始记录或内部节点。
+单次合并保守 O(log n) 节点操作；当前 append 实现会复制小型前沿数组，不能将整体分配
+说成严格零分配。区间验证需读取并哈希全部交付记录，前沿合并额外花费 O(B log n) 操作。
+
+磁盘日志存完整节点供随机读取，批量写入不载入完整历史。各操作的 I/O、上限和恢复
+要求在 STORAGE.md 中单独定义。持久化采用检查点提交，调用方仍负责可信根认证及并发访问。

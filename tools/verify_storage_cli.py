@@ -164,9 +164,9 @@ def main():
         deadline = time.monotonic() + 30
         while time.monotonic() < deadline:
             try:
-                checkpoint = (crashed / "state").read_bytes()
-                committed = int.from_bytes(checkpoint[26:34], "little")
-                if committed >= 1024:
+                # Observe a later batch's node writes rather than opening the
+                # live checkpoint: Windows readers can block its replacement.
+                if (crashed / "nodes").stat().st_size > 4096 * 32:
                     break
             except OSError:
                 pass

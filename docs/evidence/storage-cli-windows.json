@@ -1,0 +1,32 @@
+{
+  "platform": "nt",
+  "cli_invocations_checked": 39,
+  "workflows": [
+    "persistent_event_log",
+    "interval_receipt",
+    "mergeable_shards"
+  ],
+  "real_writer_kill_recovery": {
+    "committed_leaves": 3072,
+    "root_verified": true
+  },
+  "scale": [
+    {
+      "leaves": 70000,
+      "batch_size": 1024,
+      "append_seconds": 0.8647,
+      "peak_rss_bytes": 8417280,
+      "store_bytes": 6720099,
+      "root_matches_independent_hashlib": true
+    },
+    {
+      "leaves": 140000,
+      "batch_size": 1024,
+      "append_seconds": 1.7727,
+      "peak_rss_bytes": 8359936,
+      "store_bytes": 13440099,
+      "root_matches_independent_hashlib": true
+    }
+  ],
+  "notes": "Sampled process memory and one timing run; no universal throughput or power-loss claim."
+}

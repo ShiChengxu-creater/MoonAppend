@@ -1,118 +1,87 @@
 # MoonAppend
 
-MoonBit 的追加日志 Merkle 证明库。核心能力是生成并验证两个历史快照之间的
-**一致性证明**：在可信旧根已保存的前提下，检查新的承诺是否保留了旧记录及其顺序。
-另提供单条记录的包含证明、增量追加和历史前缀快照。
+MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节点，支持进程重启后继续追加、历史快照、批量提交，以及包含、一致性和连续区间证明。还提供可合并的 compact range，用少量哈希完成分片构树和状态恢复。
 
-仓库：[ShiChengxu-creater/MoonAppend](https://github.com/ShiChengxu-creater/MoonAppend)。
-当前预览版 [`0.1.0-alpha.1`](https://mooncakes.io/docs/ShiChengxu/moonappend@0.1.0-alpha.1)
-已于 2026-10-20 发布到 Mooncakes，并完成三后端独立安装验证。初验入口见
-[INITIAL_ACCEPTANCE.md](INITIAL_ACCEPTANCE.md)。
+仓库当前开发版本为 **0.2.0-alpha.1，尚未发布**。Mooncakes 上的 [0.1.0-alpha.1](https://mooncakes.io/docs/ShiChengxu/moonappend@0.1.0-alpha.1) 只有原先的基础内存功能。以下扩展命令需要本仓库源码；正式申报前仍需参赛者核对材料。
 
-## 运行内存示例
+## 模块
 
-工具链：`moon 0.1.20260920`、`moonc 0.10.14+7d59c7ec9`，依赖锁定
-`moonbitlang/x@0.4.44`。native 使用 C 工具链，本地已能调用 MSVC；JS 需要 Node.js；
-wasm-gc 使用 MoonBit 自带 moonrun。独立参考脚本需要 Python 3.12+ 和 Go 1.22.7+，
-CI 使用 Python 3.12、Node.js 22、Go 1.27.2。
+| 导入路径 | 功能 | 后端 |
+| --- | --- | --- |
+| `ShiChengxu/moonappend` | 内存日志、批量追加、compact range、三类证明、外部节点读取接口 | native / wasm-gc / JS |
+| `ShiChengxu/moonappend/wire` | 严格 JSON 快照、证明、十六进制记录交换 | native / wasm-gc / JS |
+| `ShiChengxu/moonappend/disk` | 磁盘日志、提交检查点、重启恢复、随机读取和全量审计 | native |
+| `cmd/moonappend` | 上述能力的文件命令行入口 | native |
 
-在仓库根目录逐条运行，失败即停止：
+树、证明、序列化、提交顺序和恢复判断使用 MoonBit 实现。小型 C 适配层只负责文件偏移读写、同步、原子替换、Unicode 路径和操作系统锁。默认后端改为 native；便携核心也持续在另外两个后端验证。
 
-```sh
-moon update
-moon run examples/memory --target wasm-gc
-```
+## 从源码运行
 
-输出：
-
-```text
-growth 3 -> 7: VERIFIED
-rewritten history: ROOT_MISMATCH
-release-2 inclusion: VERIFIED
-changed leaf: ROOT_MISMATCH
-```
-
-示例先保存 3 条发布记录的旧快照，正常追加到 7 条；再用改写旧记录后生成的新证明，
-验证它无法匹配原先保存的旧根。所有计算都在内存中，不需要网络或文件服务。
-
-## 库接口
-
-模块名为 `ShiChengxu/moonappend`，在自己的 MoonBit 项目中安装预览版：
+工具链固定 `moon 0.1.20260920`、`moonc 0.10.14+7d59c7ec9`，依赖 `moonbitlang/x@0.4.44`。native 需要 C 编译环境，Windows 本地使用 MSVC，Linux CI 使用系统 C 工具链。JS 需要 Node.js。
 
 ```sh
 moon update
-moon add ShiChengxu/moonappend@0.1.0-alpha.1
+moon run cmd/moonappend --target native -- --help
+python tools/verify_storage_cli.py
 ```
 
-在调用方的 `moon.pkg` 中添加 `import { "ShiChengxu/moonappend" }`。
-仓库的源码消费者另通过本地 `moon.work` 使用。公开 API 见
-[pkg.generated.mbti](pkg.generated.mbti)。
+最后一条命令会在 `_build/` 创建独立数据目录，运行 39 次命令行验证，包括进程终止恢复及 7 万、14 万条记录的实际构树。需要 Python 3.12+；详细场景和输入文件见 [docs/SCENARIOS.md](docs/SCENARIOS.md)。
+
+## 三种使用方式
+
+- **持久化事件日志**：分批追加事件，关闭程序后重新打开，保留历史快照并继续写；读取单条记录，或对整个日志做损坏审计。
+- **区间数据回执**：导出 `[start,end)` 的记录和共享证明，接收方只拿这批数据及可信快照即可离线验证内容、顺序和位置。
+- **分片构树与恢复**：各任务分别计算相邻区间的 compact range，合并得到总根；保存构树状态后可从新进程继续，无须保留全部叶子。
+
+这些是可复现的集成示例，不表示已有生产部署。各自的输入、处理步骤、错误案例与输出见 [场景说明](docs/SCENARIOS.md)。
+
+## 核心 API
+
+在调用方的 `moon.pkg` 中导入根包并取别名 `tree`。例如：
 
 ```moonbit
-let log = @moonappend.MemoryLog::new()
-ignore(log.append(b"first record"))
-let saved = log.snapshot()
-ignore(log.append(b"second record"))
-let grown = log.snapshot()
-let proof = log.prove_consistency(1UL, 2UL)
-assert_true(@moonappend.verify_consistency(saved, grown, proof).is_verified())
+let log = @tree.MemoryLog::new()
+let old = log.append_batch([b"one", b"two"])
+let head = log.append_batch([b"three", b"four"])
+let growth = log.prove_consistency(2UL, 4UL)
+assert_true(@tree.verify_consistency(old, head, growth).is_verified())
+let proof = log.prove_range(1UL, 3UL, 4UL)
+assert_true(@tree.verify_range(head, 1UL, [b"two", b"three"], proof).is_verified())
 ```
 
-构造和追加可能抛出 `AppendError`，应在可抛出错误的函数或 `try/catch` 中使用。
-可编译的完整例子在 `examples/memory`。证明构造器验证元数据及路径限额，并复制节点数组；
-对外返回的节点数组不会泄露内部可变存储。`Hash32` 包含不可变字节。
+上述调用可能抛出错误，应放在可抛出错误的函数或测试中。磁盘调用方导入 `ShiChengxu/moonappend/disk`，使用 `DiskLog::create/open`、`append_batch`、`snapshot_at`、`prove_range`、`read_entry` 和 `audit`；使用结束必须 `close`。
 
-## 初验能力与边界
+公开 API 由 `moon info` 生成：根目录、`wire/` 和 `disk/` 各有 `pkg.generated.mbti`。外部消费者验证见 `tools/verify_consumer.py`，不会依赖包内私有字段。
 
-| 能力 | alpha 状态 |
-| --- | --- |
-| SHA-256、叶/节点域分离、规范非二次幂树 | 已实现 |
-| 有界内存追加、历史前缀根、快照 | 已实现 |
-| 包含证明生成与严格验证 | 已实现 |
-| 一致性证明生成与严格验证 | 已实现 |
-| 无文件系统示例、独立 Python/Go 对照、三后端 CI | 已提供；具体运行状态见初验记录 |
-| 严格 JSON、文件 CLI、其余场景集成 | 留待终验 |
-| Mooncakes 预览版发布、从包仓库安装 | alpha.1 已发布，三后端独立消费者验证通过 |
+## 存储与信任边界
 
-树形和证明算法限定为 [RFC 9162 §2.1](https://www.rfc-editor.org/rfc/rfc9162.html#section-2.1)
-的 SHA-256 配置，不是完整 CT、X.509 或 SCT 实现。
+磁盘日志写入节点、索引和原始记录，先同步数据，再原子替换检查点。重启时验证检查点和前沿，回收未提交尾部；短于已提交长度的文件直接报错。写入发生 I/O 错误后，该对象禁止继续追加，应关闭重开，并检查最后实际提交的快照。提供六阶段故障注入和实际终止写进程的恢复测试。
 
-默认生成器最多 65,536 叶，累计载荷最多 64 MiB，可通过 `Limits::new` 收紧。
-内存只保存哈希和完整子树，不保存载荷；限额不是进程总内存保证。
-验证器支持到 `2^63−1` 的逻辑树大小，无须分配该规模的树，路径最多 128 节点。
-文本调用方必须显式确定 UTF-8 等字节编码，库不 trim、排序、换行转换或正规化。
+`open` 只检查恢复所需状态，**全历史损坏检查使用 `audit`**。校验和和 Merkle 根不认证来源；调用方要独立保存可信快照、确定记录编码及处理身份认证。库不证明事件真实、没有遗漏或运营方从未分叉。
 
-`old_size == 0` 返回 `NO_PRIOR_HISTORY`；相等大小要求空证明且根相同。
-`VERIFIED` 只表示输入承诺间的关系符合证明。调用方必须独立取得可信快照并完成身份认证；
-库不证明记录真实、时间可信、日志完整披露或运营方从不分叉。`MemoryLog` 是单线程可变对象，
-并发访问和持久化由上层负责。详见 [docs/ALGORITHMS.md](docs/ALGORITHMS.md)。
+持久化支持本地文件系统和单写者；不提供数据库事务、并发线程安全或网络文件系统保证。同步和原子替换的语义仍取决于 OS、文件系统及硬件。进程终止测试不等同于物理断电认证。格式、恢复边界及资源上限见 [docs/STORAGE.md](docs/STORAGE.md)。
 
-## 验证
+## 验证与规模记录
 
-对 `native`、`wasm-gc`、`js` 分别执行：
+本地已通过 native **98** 个测试块，wasm-gc、JS 各 **92** 个。另有独立 Python/Go 根与 RFC 证明对照、595 个 compact range 和 6,545 个区间证明的 Go 对照、干净消费者及 CLI 验证。测试数量不是覆盖率。
 
 ```sh
 moon fmt --check
-moon check --target wasm-gc --deny-warn
-moon build --target wasm-gc --deny-warn
-moon test --target wasm-gc --deny-warn
-python tools/verify_reference.py --target wasm-gc --go go
-python tools/verify_consumer.py --target wasm-gc
+moon check --target native --deny-warn
+moon build --target native --deny-warn
+moon test --target native --deny-warn
+python tools/verify_reference.py --target native --go go
+python tools/verify_expanded_reference.py --target native --go go
+python tools/verify_consumer.py --target native
+python tools/verify_storage_cli.py
 ```
 
-把命令中的目标替换为另外两个后端。Go 参考源码已锁定提交并保留许可证，
-`-mod=vendor` 方式不需要访问模块代理；它只服务开发验收，不参与产品运行时。
-`go_vectors_test.mbt` 是外部生成的测试夹具，与手写实现分别统计。
+核心命令也分别替换为 `wasm-gc` 和 `js` 运行；磁盘与 CLI 仅 native。Go 对照使用仓库保留的锁定源码，离线 `-mod=vendor` 构建，需要 Go 1.22.7+。CI 使用 Go 1.27.2、Python 3.12、Node.js 22，并保存参考与存储实测附件。
 
-CI 运行同样的检查、构建、测试、场景、独立对照和消费者测试，并检查生成向量可重复性、
-公开 API 无漂移、参考来源校验值与至少 10 次 Git 提交。
-
-验证已发布版本的安装与调用可执行 `python tools/verify_published.py`，它创建新消费者，
-从 Mooncakes 添加精确版本，在三个后端验证公开 API；没有本地工作区替代依赖。
-该检查需要已发布版本和网络，不属于上述源码 CI 的必跑步骤。
+完整结果和限制见 [docs/EXTENDED_VALIDATION.md](docs/EXTENDED_VALIDATION.md)。原先 0.1 的发布及初验记录保存在 [docs/VALIDATION.md](docs/VALIDATION.md)。
 
 ## 来源与许可
 
-Apache-2.0。实现及参考范围见 [THIRD_PARTY.md](THIRD_PARTY.md)，
-AI 协作说明见 [AI_USAGE.md](AI_USAGE.md)。生态差异和复查记录见
-[docs/TOPIC_RECHECK.md](docs/TOPIC_RECHECK.md)。本项目不宣称发明 Merkle 算法或生态中绝无同类。
+Apache-2.0。算法依据 RFC 9162；compact ranges 参考 transparency-dev/merkle 的公开设计及其锁定 Go 实现进行对照。pymerkle 的公开文档用于了解可插拔存储设计，未引入其代码或运行时依赖。
+
+详见 [THIRD_PARTY.md](THIRD_PARTY.md)、[AI_USAGE.md](AI_USAGE.md)、[docs/TOPIC_RECHECK.md](docs/TOPIC_RECHECK.md)。本项目不宣称发明 Merkle 算法，也不宣称生态中绝无同类。

@@ -1,5 +1,7 @@
 /* Native file primitives only. Merkle algorithms, commit order and recovery
- * validation are implemented in MoonBit. All offsets are signed 64-bit. */
+ * validation are implemented in MoonBit. All offsets are signed 64-bit.
+ * Windows path and exclusive-create API usage also consulted yzy726/MoonDelta
+ * (Apache-2.0); source and exact reference are recorded in THIRD_PARTY.md. */
 #ifndef _WIN32
 #define _POSIX_C_SOURCE 200809L
 #define _FILE_OFFSET_BITS 64

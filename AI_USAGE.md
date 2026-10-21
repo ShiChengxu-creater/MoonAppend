@@ -5,6 +5,11 @@ projects, implement the MoonBit core, design regression tests and independent
 reference adapters, draft documentation and configure CI. The participant is
 responsible for reviewing the scope, implementation and submission materials.
 
+For the 2026-10-21 review response, AI assistance also covered compact ranges,
+interval proofs, storage/checkpoint logic, the native I/O adapter, fault tests,
+CLI workflows and independent scale measurements. These changes are supported
+by runnable tests and do not imply independent security certification.
+
 Quality claims are limited to executable tests and the recorded targets and
 versions. Production MoonBit, handwritten tests, generated test vectors and
 vendored Go reference code are counted separately. The work does not claim that

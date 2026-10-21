@@ -1,5 +1,7 @@
 # MoonAppend 初验实测记录
 
+> 本文保留 0.1 的历史实测与发布记录；0.2 的新增功能和当前结果见 [EXTENDED_VALIDATION.md](EXTENDED_VALIDATION.md)。
+
 日期：2026-10-19（Asia/Shanghai）。版本：`0.1.0-alpha.1`。
 本记录说明开发侧的初验结果，不表示赛事官方已经验收。
 
