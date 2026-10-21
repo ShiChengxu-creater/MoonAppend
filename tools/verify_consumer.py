@@ -40,9 +40,11 @@ def run(command, cwd):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", choices=["native", "wasm-gc", "js"], default="wasm-gc")
+    parser.add_argument("--package-zip", type=Path, help="Verify an actual moon package archive instead of git archive")
     args = parser.parse_args()
     revision = run(["git", "rev-parse", "HEAD"], ROOT).strip()
-    archive = subprocess.check_output(["git", "archive", "--format=zip", revision], cwd=ROOT)
+    archive = (args.package_zip.read_bytes() if args.package_zip else
+               subprocess.check_output(["git", "archive", "--format=zip", revision], cwd=ROOT))
     build = (ROOT / "_build").resolve()
     build.mkdir(exist_ok=True)
     workspace = Path(tempfile.mkdtemp(prefix="consumer-", dir=build)).resolve()
@@ -92,7 +94,8 @@ test "separate native consumer persists and reopens a log" {
     if f"Total tests: {expected_tests}, passed: {expected_tests}, failed: 0" not in output:
         raise AssertionError(output)
     report = {"commit": revision, "version": version, "target": args.target, "public_api_test_blocks": expected_tests,
-              "source": "clean Git archive; not a Mooncakes installation"}
+              "source": ("moon package archive; not a Mooncakes installation" if args.package_zip else
+                         "clean Git archive; not a Mooncakes installation")}
     (workspace / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
 

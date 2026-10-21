@@ -26,6 +26,31 @@ test "published package checks growth historical inclusion and rewritten history
 }
 '''
 
+EXTENDED_TESTS = r'''///|
+test "published extended API verifies range JSON and restored shards" {
+  let log = @append.MemoryLog::new()
+  let head = log.append_batch([b"one", b"two", b"three"])
+  let proof = log.prove_range(1UL, 3UL, 3UL)
+  assert_true(@append.verify_range(head, 1UL, [b"two", b"three"], @wire.decode_range(@wire.encode_range(proof))).is_verified())
+  let left = @append.CompactRange::from_leaves(0UL, [b"one"])
+  let right = @append.CompactRange::from_leaves(1UL, [b"two", b"three"])
+  assert_eq(@append.CompactRange::restore(left.checkpoint()).merge(right).snapshot(), head)
+}
+'''
+
+DISK_TEST = r'''///|
+test "published native disk API survives reopening" {
+  let path = @env.current_dir().unwrap() + "/registry-disk-" + @env.now().to_string()
+  let log = @disk.DiskLog::create(path)
+  let saved = log.append_batch([b"one", b"two"])
+  log.close()
+  let restored = @disk.DiskLog::open(path)
+  defer restored.close()
+  assert_eq(restored.audit(), saved)
+  assert_eq(restored.read_entry(1UL), b"two")
+}
+'''
+
 
 def run(command, cwd):
     result = subprocess.run(command, cwd=cwd, capture_output=True, encoding="utf-8", timeout=240)
@@ -38,6 +63,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", default="0.1.0-alpha.1")
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--extended", action="store_true", help="Also exercise 0.2 range/wire/shard/disk APIs")
     args = parser.parse_args()
     if not args.version or any(c not in "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-+" for c in args.version):
         raise ValueError("Expected a release version, not a path or dependency expression")
@@ -49,9 +75,7 @@ def main():
             raise RuntimeError(f"A workspace could substitute local source: {parent}")
     (consumer / "moon.mod").write_text(
         'name = "local/moonappend_registry_consumer"\nversion = "0.0.0"\n', encoding="utf-8")
-    (consumer / "moon.pkg").write_text(
-        'import { "ShiChengxu/moonappend" @append, } for "test"\n', encoding="utf-8")
-    (consumer / "consumer_test.mbt").write_text(TESTS, encoding="utf-8")
+    (consumer / "consumer_test.mbt").write_text(TESTS + (EXTENDED_TESTS if args.extended else ""), encoding="utf-8")
     run(["moon", "update"], consumer)
     run(["moon", "add", f"{MODULE}@{args.version}"], consumer)
     dependency_tree = run(["moon", "tree"], consumer)
@@ -59,12 +83,24 @@ def main():
         raise AssertionError(f"Expected exact registry version in dependency tree:\n{dependency_tree}")
     targets = {}
     for target in ["native", "wasm-gc", "js"]:
+        imports = '"ShiChengxu/moonappend" @append, '
+        count = 1
+        if args.extended:
+            count = 2
+            imports += '"ShiChengxu/moonappend/wire", '
+            if target == "native":
+                count = 3
+                imports += '"ShiChengxu/moonappend/disk", "moonbitlang/core/env", '
+                (consumer / "disk_test.mbt").write_text(DISK_TEST, encoding="utf-8")
+            else:
+                (consumer / "disk_test.mbt").unlink(missing_ok=True)
+        (consumer / "moon.pkg").write_text('import { ' + imports + '} for "test"\n', encoding="utf-8")
         run(["moon", "check", "--target", target, "--deny-warn"], consumer)
         run(["moon", "build", "--target", target, "--deny-warn"], consumer)
         output = run(["moon", "test", "--target", target, "--deny-warn"], consumer)
-        if "Total tests: 1, passed: 1, failed: 0" not in output:
+        if f"Total tests: {count}, passed: {count}, failed: 0" not in output:
             raise AssertionError(output)
-        targets[target] = {"check": "passed", "build": "passed", "public_api_tests": "1/1"}
+        targets[target] = {"check": "passed", "build": "passed", "public_api_tests": f"{count}/{count}"}
     report = {"module": MODULE, "version": args.version, "source": "Mooncakes registry",
               "local_workspace_override": False, "targets": targets,
               "dependency_tree": "\n".join(dependency_tree.strip().splitlines()[1:])}
