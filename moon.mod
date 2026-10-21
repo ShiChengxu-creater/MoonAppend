@@ -1,6 +1,6 @@
 name = "ShiChengxu/moonappend"
 
-version = "0.1.0-alpha.1"
+version = "0.2.0-alpha.1"
 
 readme = "README.md"
 
@@ -10,7 +10,7 @@ license = "Apache-2.0"
 
 keywords = [ "merkle", "append-only", "consistency-proof", "rfc9162" ]
 
-preferred_target = "wasm-gc"
+preferred_target = "native"
 
 description = "Bounded append-only Merkle log with inclusion and consistency proofs"
 

@@ -1,0 +1,46 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ShiChengxu/moonappend/wire"
+
+import {
+  "ShiChengxu/moonappend",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn bytes_hex(Bytes) -> String
+
+pub fn decode_consistency(String) -> @moonappend.ConsistencyProof raise
+
+pub fn decode_inclusion(String) -> @moonappend.InclusionProof raise
+
+pub fn decode_range(String) -> @moonappend.RangeProof raise
+
+pub fn decode_records(String) -> Array[Bytes] raise
+
+pub fn decode_snapshot(String) -> @moonappend.Snapshot raise
+
+pub fn encode_consistency(@moonappend.ConsistencyProof) -> String
+
+pub fn encode_inclusion(@moonappend.InclusionProof) -> String
+
+pub fn encode_range(@moonappend.RangeProof) -> String
+
+pub fn encode_records(Array[Bytes]) -> String
+
+pub fn encode_snapshot(@moonappend.Snapshot) -> String
+
+pub fn hex_bytes(String) -> Bytes raise WireError
+
+pub fn parse_size(String) -> UInt64 raise WireError
+
+// Errors
+pub(all) suberror WireError {
+  WireError(String)
+} derive(@debug.Debug)
+pub fn WireError::to_repr(Self) -> @debug.Repr
+
+// Types and methods
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ShiChengxu/moonappend/disk"
+
+import {
+  "ShiChengxu/moonappend",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const MAX_DISK_LEAVES : UInt64 = 72057594037927935
+
+pub fn read_file(String, limit? : Int) -> Bytes raise
+
+pub fn write_new_file(String, Bytes) -> Unit raise
+
+// Errors
+pub(all) suberror StorageError {
+  StorageError(String)
+} derive(@debug.Debug)
+pub fn StorageError::to_repr(Self) -> @debug.Repr
+
+// Types and methods
+pub struct DiskLog {
+  // private fields
+}
+pub fn DiskLog::append(Self, Bytes) -> UInt64 raise
+pub fn DiskLog::append_batch(Self, Array[Bytes]) -> @moonappend.Snapshot raise
+pub fn DiskLog::audit(Self) -> @moonappend.Snapshot raise
+pub fn DiskLog::close(Self) -> Unit
+pub fn DiskLog::create(String) -> Self raise
+pub fn DiskLog::open(String) -> Self raise
+pub fn DiskLog::prove_consistency(Self, UInt64, UInt64) -> @moonappend.ConsistencyProof raise
+pub fn DiskLog::prove_inclusion(Self, UInt64, UInt64) -> @moonappend.InclusionProof raise
+pub fn DiskLog::prove_range(Self, UInt64, UInt64, UInt64) -> @moonappend.RangeProof raise
+pub fn DiskLog::read_entry(Self, UInt64) -> Bytes raise
+pub fn DiskLog::read_node(Self, Int, UInt64) -> @moonappend.Hash32 raise
+pub fn DiskLog::recovered_bytes(Self) -> UInt64
+pub fn DiskLog::snapshot(Self) -> @moonappend.Snapshot raise
+pub fn DiskLog::snapshot_at(Self, UInt64) -> @moonappend.Snapshot raise
+
+// Type aliases
+
+// Traits
