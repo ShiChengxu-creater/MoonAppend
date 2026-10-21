@@ -9,6 +9,9 @@ pub(all) suberror AppendError {
   LeafLimit
   ByteLimit
   InvalidProofLength
+  InvalidRange
+  NonContiguous
+  InvalidCheckpoint
 } derive(Eq, Debug)
 
 ///|

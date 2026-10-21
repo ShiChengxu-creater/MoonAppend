@@ -30,12 +30,34 @@ pub(all) suberror AppendError {
   LeafLimit
   ByteLimit
   InvalidProofLength
+  InvalidRange
+  NonContiguous
+  InvalidCheckpoint
 } derive(Eq, @debug.Debug)
 pub fn AppendError::equal(Self, Self) -> Bool
 pub fn AppendError::not_equal(Self, Self) -> Bool
 pub fn AppendError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
+pub struct CompactRange {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn CompactRange::append(Self, Bytes) -> Self raise AppendError
+pub fn CompactRange::append_hash(Self, Hash32) -> Self raise AppendError
+pub fn CompactRange::checkpoint(Self) -> Bytes
+pub fn CompactRange::empty(start? : UInt64) -> Self raise AppendError
+pub fn CompactRange::end(Self) -> UInt64
+pub fn CompactRange::equal(Self, Self) -> Bool
+pub fn CompactRange::from_leaves(UInt64, Array[Bytes]) -> Self raise AppendError
+pub fn CompactRange::merge(Self, Self) -> Self raise AppendError
+pub fn CompactRange::new(UInt64, UInt64, Array[Hash32]) -> Self raise AppendError
+pub fn CompactRange::nodes(Self) -> Array[Hash32]
+pub fn CompactRange::not_equal(Self, Self) -> Bool
+pub fn CompactRange::restore(Bytes) -> Self raise AppendError
+pub fn CompactRange::snapshot(Self) -> Snapshot raise AppendError
+pub fn CompactRange::start(Self) -> UInt64
+pub fn CompactRange::to_repr(Self) -> @debug.Repr
+
 pub struct ConsistencyProof {
   // private fields
 } derive(Eq, @debug.Debug)
@@ -80,6 +102,7 @@ pub struct MemoryLog {
   // private fields
 }
 pub fn MemoryLog::append(Self, Bytes) -> UInt64 raise AppendError
+pub fn MemoryLog::append_batch(Self, Array[Bytes]) -> Snapshot raise AppendError
 pub fn MemoryLog::input_bytes(Self) -> Int
 pub fn MemoryLog::new(limits? : Limits) -> Self
 pub fn MemoryLog::prove_consistency(Self, UInt64, UInt64) -> ConsistencyProof raise AppendError
