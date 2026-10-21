@@ -8,17 +8,29 @@ import {
 // Values
 pub const MAX_TREE_SIZE : UInt64 = 9223372036854775807
 
+pub fn compact_from_reader(UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> CompactRange raise
+
+pub fn consistency_from_reader(UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> ConsistencyProof raise
+
 pub fn empty_root() -> Hash32
 
 pub fn hash_leaf(Bytes) -> Hash32
 
 pub fn hash_node(Hash32, Hash32) -> Hash32
 
+pub fn inclusion_from_reader(UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> InclusionProof raise
+
+pub fn range_from_reader(UInt64, UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> RangeProof raise
+
+pub fn snapshot_from_reader(UInt64, (Int, UInt64) -> Hash32 raise) -> Snapshot raise
+
 pub fn tree_root(Array[Bytes], limits? : Limits) -> Hash32 raise AppendError
 
 pub fn verify_consistency(Snapshot, Snapshot, ConsistencyProof) -> Verification
 
 pub fn verify_inclusion(Snapshot, UInt64, Bytes, InclusionProof) -> Verification
+
+pub fn verify_range(Snapshot, UInt64, Array[Bytes], RangeProof) -> Verification
 
 // Errors
 pub(all) suberror AppendError {
@@ -107,9 +119,23 @@ pub fn MemoryLog::input_bytes(Self) -> Int
 pub fn MemoryLog::new(limits? : Limits) -> Self
 pub fn MemoryLog::prove_consistency(Self, UInt64, UInt64) -> ConsistencyProof raise AppendError
 pub fn MemoryLog::prove_inclusion(Self, UInt64, UInt64) -> InclusionProof raise AppendError
+pub fn MemoryLog::prove_range(Self, UInt64, UInt64, UInt64) -> RangeProof raise
+pub fn MemoryLog::read_node(Self, Int, UInt64) -> Hash32 raise AppendError
 pub fn MemoryLog::size(Self) -> UInt64
 pub fn MemoryLog::snapshot(Self) -> Snapshot
 pub fn MemoryLog::snapshot_at(Self, UInt64) -> Snapshot raise AppendError
+
+pub struct RangeProof {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn RangeProof::end(Self) -> UInt64
+pub fn RangeProof::equal(Self, Self) -> Bool
+pub fn RangeProof::new(UInt64, UInt64, UInt64, Array[Hash32]) -> Self raise AppendError
+pub fn RangeProof::nodes(Self) -> Array[Hash32]
+pub fn RangeProof::not_equal(Self, Self) -> Bool
+pub fn RangeProof::start(Self) -> UInt64
+pub fn RangeProof::to_repr(Self) -> @debug.Repr
+pub fn RangeProof::tree_size(Self) -> UInt64
 
 pub struct Snapshot {
   // private fields
