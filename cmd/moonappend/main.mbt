@@ -59,7 +59,7 @@ fn run(args : Array[String], destination : String?) -> Unit raise Error {
       raise CliError("HELP_HAS_NO_OUTPUT_FILE")
     }
     display(
-      "MoonAppend 0.2.0-alpha.1 native CLI; all indices are zero-based, ranges are [start,end)",
+      "MoonAppend 0.2.0 native CLI; all indices are zero-based, ranges are [start,end)",
     )
     display(
       "init DIR | append DIR RECORDS.json | snapshot DIR SIZE | audit DIR",

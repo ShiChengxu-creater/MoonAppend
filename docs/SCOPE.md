@@ -7,7 +7,7 @@ file-backed logs with recovery, audit and CLI workflows.
 
 Portable core and wire support native, wasm-gc and JS. Disk and CLI are native.
 The three workflows are persistent events, interval receipts and shard merge/resume.
-Current source version is 0.2.0-alpha.1, unpublished; registry 0.1.0-alpha.1 is the
+Current source version is 0.2.0, unpublished; registry 0.1.0-alpha.1 is the
 earlier limited-memory release. New-release publication and registry installation
 must be recorded separately from source-archive consumer tests.
 

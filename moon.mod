@@ -1,6 +1,6 @@
 name = "ShiChengxu/moonappend"
 
-version = "0.2.0-alpha.1"
+version = "0.2.0"
 
 readme = "README.md"
 

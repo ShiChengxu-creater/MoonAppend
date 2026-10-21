@@ -1,6 +1,6 @@
 # 0.2 扩展验证记录
 
-日期：2026-10-21，Asia/Shanghai。版本 `0.2.0-alpha.1`，当前是源码开发版本，尚未发布。
+日期：2026-10-21，Asia/Shanghai。版本 `0.2.0`，当前是源码开发版本，尚未发布。
 此前已发布的 `0.1.0-alpha.1` 不包含本次新增功能。本文是工程实测记录，不表示赛事已复审通过。
 
 ## 对初审问题的实际补充
@@ -77,7 +77,7 @@ native 的 2 个公开 API 测试、wasm-gc 和 JS 各 1 个测试均通过，�
 这仍是安装本地包归档，不是已经从 Mooncakes 安装了新版本。
 
 新版本实际发布后，再执行：
-`python tools/verify_published.py --version 0.2.0-alpha.1 --extended`。
+`python tools/verify_published.py --version 0.2.0 --extended`。
 它在无本地工作区替代的独立消费者里检查注册表安装、range/wire/compact API，以及 native
 磁盘重开。0.1 的包仓库安装结果不能替代本版本；当前尚未发布 0.2。
 
