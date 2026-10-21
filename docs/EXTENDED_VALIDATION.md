@@ -67,8 +67,19 @@ Windows native release 本次样本（每条固定 16 字节、每批 1024 条�
 并上传结果。源码消费者从 Git archive 建新目录，native 实际调用磁盘包，
 仍不能冒称从 Mooncakes 安装了尚未发布的 0.2。
 
-0.2 的打包、远程 Linux CI 及实际发布需分别记录；0.1 的包仓库安装结果不能替代本版本。
-新版本发布前，应运行 `moon package --list` 检查实际包，并复验解压后的公开 API。
+提交 `41f99e2` 的[三后端远程 CI](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/39619825250)
+已全部通过，包括 Linux native 的 39 次 CLI 调用、真实写进程终止恢复、7 万/14 万叶构树。
+后续新增发布检查脚本的提交也需分别查看对应 CI 结果，不能直接套用前一版本的通过状态。
+
+0.2 已通过 `moon package --list` 和实际打包检查。将真实发布 ZIP 解压到新的消费者，
+native 的 2 个公开 API 测试、wasm-gc 和 JS 各 1 个测试均通过，包含磁盘、JSON 和区间 API。
+复验可用 `python tools/verify_consumer.py --target native --package-zip PATH_TO_ZIP`。
+这仍是安装本地包归档，不是已经从 Mooncakes 安装了新版本。
+
+新版本实际发布后，再执行：
+`python tools/verify_published.py --version 0.2.0-alpha.1 --extended`。
+它在无本地工作区替代的独立消费者里检查注册表安装、range/wire/compact API，以及 native
+磁盘重开。0.1 的包仓库安装结果不能替代本版本；当前尚未发布 0.2。
 
 尚未承诺数据库事务、多写者、线程安全、物理断电恢复认证、网络调度器或完整 CT 服务。
 完整故障语义见 STORAGE.md，交换格式见 FORMAT.md。

@@ -75,6 +75,10 @@ def main():
             raise RuntimeError(f"A workspace could substitute local source: {parent}")
     (consumer / "moon.mod").write_text(
         'name = "local/moonappend_registry_consumer"\nversion = "0.0.0"\n', encoding="utf-8")
+    initial_imports = '"ShiChengxu/moonappend" @append, '
+    if args.extended:
+        initial_imports += '"ShiChengxu/moonappend/wire", '
+    (consumer / "moon.pkg").write_text('import { ' + initial_imports + '} for "test"\n', encoding="utf-8")
     (consumer / "consumer_test.mbt").write_text(TESTS + (EXTENDED_TESTS if args.extended else ""), encoding="utf-8")
     run(["moon", "update"], consumer)
     run(["moon", "add", f"{MODULE}@{args.version}"], consumer)
