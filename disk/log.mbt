@@ -8,6 +8,7 @@ pub struct DiskLog {
   priv recovered : UInt64
   priv mut closed : Bool
   priv mut poisoned : Bool
+  priv fault_stage : Ref[Int]
 }
 
 ///|
@@ -29,6 +30,7 @@ fn commit_state(
   path : String,
   state : @tree.CompactRange,
   payload_end : UInt64,
+  fault? : Int = 0,
 ) -> Unit raise Error {
   let fd = open_file(path + "/state.tmp", 3)
   {
@@ -37,6 +39,9 @@ fn commit_state(
     if io_sync(fd) != 0 {
       raise StorageError("STATE_SYNC_FAILED")
     }
+  }
+  if fault == 5 {
+    raise StorageError("INJECTED_BEFORE_STATE_REPLACE")
   }
   if io_replace(
       path_bytes(path),
@@ -80,6 +85,7 @@ pub fn DiskLog::create(path : String) -> DiskLog raise Error {
     recovered: 0UL,
     closed: false,
     poisoned: false,
+    fault_stage: Ref(0),
   }
 }
 
@@ -132,6 +138,7 @@ pub fn DiskLog::open(path : String) -> DiskLog raise Error {
     recovered,
     closed: false,
     poisoned: false,
+    fault_stage: Ref(0),
   }
   // Validate committed frontier before performing recovery writes.
   let actual = @tree.snapshot_from_reader(state.end(), (level, index) => {
@@ -299,14 +306,29 @@ pub fn DiskLog::append_batch(
       node_count(old_size) * 32UL,
       Bytes::from_array(nodes[:]),
     )
+    if self.fault_stage.val == 1 {
+      raise StorageError("INJECTED_AFTER_NODES")
+    }
     write_at(self.files[2], old_size * 16UL, Bytes::from_array(index[:]))
+    if self.fault_stage.val == 2 {
+      raise StorageError("INJECTED_AFTER_INDEX")
+    }
     write_at(self.files[3], self.payload_end, Bytes::from_array(payload[:]))
+    if self.fault_stage.val == 3 {
+      raise StorageError("INJECTED_AFTER_PAYLOAD")
+    }
     for i in 1..<4 {
       if io_sync(self.files[i]) != 0 {
         raise StorageError("DATA_SYNC_FAILED")
       }
     }
-    commit_state(self.path, state, end)
+    if self.fault_stage.val == 4 {
+      raise StorageError("INJECTED_AFTER_DATA_SYNC")
+    }
+    commit_state(self.path, state, end, fault=self.fault_stage.val)
+    if self.fault_stage.val == 6 {
+      raise StorageError("INJECTED_AFTER_COMMIT")
+    }
   }
   self.state = state
   self.payload_end = end

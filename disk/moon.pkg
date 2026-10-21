@@ -9,6 +9,11 @@ import {
   "moonbitlang/core/env",
 } for "test"
 
+import {
+  "moonbitlang/x/fs",
+  "moonbitlang/core/env",
+} for "wbtest"
+
 supported_targets = "native"
 
 options(
