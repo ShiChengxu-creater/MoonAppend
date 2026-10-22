@@ -68,3 +68,29 @@ test "duplicate decoded keys extra fields numeric sizes and trailing input fail"
     assert_true(rejected)
   }
 }
+
+///|
+test "record decoding enforces the aggregate byte limit below the JSON input cap" {
+  let mut block = "00"
+  for _ in 0..<20 {
+    block = block + block
+  }
+  // Seven 1 MiB records plus a final record reach exactly the shared raw limit.
+  let tail = block[:2064384].to_owned()
+  let prefix = "{\"format\":\"moonappend/1\",\"kind\":\"records\",\"entries\":["
+  let fields = Array::make(7, "\"" + block + "\"").join(",")
+  let accepted = prefix + fields + ",\"" + tail + "\"]}"
+  let entries = @wire.decode_records(accepted)
+  assert_eq(entries.length(), 8)
+  assert_eq(entries[7].length(), 1032192)
+  let too_large = prefix + fields + ",\"" + tail + "00\"]}"
+  assert_true(too_large.length() < 16777216)
+  let rejected = try {
+    ignore(@wire.decode_records(too_large))
+    false
+  } catch {
+    @wire.WireError("RECORD_BYTE_LIMIT") => true
+    _ => false
+  }
+  assert_true(rejected)
+}

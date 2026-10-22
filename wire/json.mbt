@@ -326,9 +326,18 @@ pub fn decode_records(input : String) -> Array[Bytes] raise Error {
         raise WireError("BATCH_LIMIT")
       }
       let output = []
+      let mut total = 0
       for item in items {
         match item {
-          String(s) => output.push(hex_bytes(s))
+          String(s) => {
+            // Match the encoder's raw-byte budget before allocating this entry.
+            if s.length() / 2 > 8372224 - total {
+              raise WireError("RECORD_BYTE_LIMIT")
+            }
+            let entry = hex_bytes(s)
+            total = total + entry.length()
+            output.push(entry)
+          }
           _ => raise WireError("EXPECTED_ENTRY")
         }
       }
