@@ -87,6 +87,12 @@ test "separate native consumer persists and reopens a log" {
   defer reopened.close()
   assert_eq(reopened.audit(), head)
   assert_eq(reopened.read_entry(1UL), b"two")
+  assert_eq(reopened.backup(path + "-backup"), head)
+  let copy = @disk.DiskLog::open(path + "-backup")
+  defer copy.close()
+  assert_eq(copy.audit(), head)
+  assert_eq(copy.append(b"independent"), 2UL)
+  assert_eq(reopened.snapshot(), head)
 }
 ''', encoding="utf-8")
     run(["moon", "check", "--target", args.target, "--deny-warn", str(consumer)], workspace)

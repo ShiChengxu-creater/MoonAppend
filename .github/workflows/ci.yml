@@ -54,6 +54,9 @@ jobs:
       - name: Native storage workflows crash recovery and scale
         if: matrix.target == 'native'
         run: python tools/verify_storage_cli.py --out artifacts/storage-cli-linux.json
+      - name: Audited backup and restore workflows
+        if: matrix.target == 'native'
+        run: python tools/verify_backup.py --out artifacts/backup-linux.json
       - name: Verify reference provenance and commit history
         run: python tools/check_repository.py
       - name: Reproduce generated Go vectors and public API
@@ -71,3 +74,50 @@ jobs:
             artifacts/reference-${{ matrix.target }}.json
             artifacts/expanded-${{ matrix.target }}.json
             artifacts/storage-cli-linux.json
+            artifacts/backup-linux.json
+  windows-native:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned MoonBit
+        shell: pwsh
+        env:
+          MOONBIT_INSTALL_VERSION: '0.10.14+7d59c7ec9'
+        run: |
+          Invoke-WebRequest https://cli.moonbitlang.com/install/powershell.ps1 -OutFile "$env:RUNNER_TEMP/install-moonbit.ps1"
+          & "$env:RUNNER_TEMP/install-moonbit.ps1"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "$env:USERPROFILE/.moon/bin" >> $env:GITHUB_PATH
+      - name: Verify toolchain
+        shell: pwsh
+        run: |
+          moon version --all
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $compilerVersion = moonc -v
+          if ($compilerVersion -notmatch 'v0\.10\.14\+7d59c7ec9') { throw "Unexpected compiler: $compilerVersion" }
+      - run: moon update
+      - run: moon fmt --check
+      - run: moon check --target native --deny-warn
+      - run: moon build --target native --deny-warn
+      - run: moon test --target native --deny-warn
+      - name: Native storage workflows crash recovery and scale
+        run: python tools/verify_storage_cli.py --out artifacts/storage-cli-windows.json
+      - name: Audited backup and restore workflows
+        run: python tools/verify_backup.py --out artifacts/backup-windows.json
+      - name: Clean native public API consumer
+        run: python tools/verify_consumer.py --target native
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-native
+          path: |
+            artifacts/storage-cli-windows.json
+            artifacts/backup-windows.json
