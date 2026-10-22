@@ -49,6 +49,8 @@ jobs:
         run: python tools/verify_reference.py --target ${{ matrix.target }} --go go --out artifacts/reference-${{ matrix.target }}.json
       - name: Clean separate consumer
         run: python tools/verify_consumer.py --target ${{ matrix.target }}
+      - name: Actual package archive consumer
+        run: python tools/verify_consumer.py --target ${{ matrix.target }} --package --out artifacts/package-consumer-${{ matrix.target }}.json
       - name: Independent compact ranges and interval proofs
         run: python tools/verify_expanded_reference.py --target ${{ matrix.target }} --go go --out artifacts/expanded-${{ matrix.target }}.json
       - name: Native storage workflows crash recovery and scale
@@ -75,6 +77,7 @@ jobs:
             artifacts/expanded-${{ matrix.target }}.json
             artifacts/storage-cli-linux.json
             artifacts/backup-linux.json
+            artifacts/package-consumer-${{ matrix.target }}.json
   windows-native:
     runs-on: windows-2022
     timeout-minutes: 20
@@ -115,9 +118,12 @@ jobs:
         run: python tools/verify_backup.py --out artifacts/backup-windows.json
       - name: Clean native public API consumer
         run: python tools/verify_consumer.py --target native
+      - name: Actual native package archive consumer
+        run: python tools/verify_consumer.py --target native --package --out artifacts/package-consumer-windows.json
       - uses: actions/upload-artifact@v4
         with:
           name: windows-native
           path: |
             artifacts/storage-cli-windows.json
             artifacts/backup-windows.json
+            artifacts/package-consumer-windows.json

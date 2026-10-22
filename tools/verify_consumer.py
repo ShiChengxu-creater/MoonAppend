@@ -40,9 +40,18 @@ def run(command, cwd):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", choices=["native", "wasm-gc", "js"], default="wasm-gc")
-    parser.add_argument("--package-zip", type=Path, help="Verify an actual moon package archive instead of git archive")
+    source_group = parser.add_mutually_exclusive_group()
+    source_group.add_argument("--package-zip", type=Path, help="Verify an actual moon package archive instead of git archive")
+    source_group.add_argument("--package", action="store_true", help="Run moon package and verify the resulting archive")
+    parser.add_argument("--out", type=Path, help="Save the consumer result as JSON")
     args = parser.parse_args()
     revision = run(["git", "rev-parse", "HEAD"], ROOT).strip()
+    if args.package:
+        run(["moon", "package"], ROOT)
+        metadata = (ROOT / "moon.mod").read_text(encoding="utf-8")
+        module = re.search(r'^name\s*=\s*"([^"]+)"', metadata, re.M).group(1)
+        version = re.search(r'^version\s*=\s*"([^"]+)"', metadata, re.M).group(1)
+        args.package_zip = ROOT / "_build/publish" / f"{module.replace('/', '-')}-{version}.zip"
     archive = (args.package_zip.read_bytes() if args.package_zip else
                subprocess.check_output(["git", "archive", "--format=zip", revision], cwd=ROOT))
     build = (ROOT / "_build").resolve()
@@ -102,7 +111,11 @@ test "separate native consumer persists and reopens a log" {
     report = {"commit": revision, "version": version, "target": args.target, "public_api_test_blocks": expected_tests,
               "source": ("moon package archive; not a Mooncakes installation" if args.package_zip else
                          "clean Git archive; not a Mooncakes installation")}
-    (workspace / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    rendered = json.dumps(report, indent=2) + "\n"
+    (workspace / "result.json").write_text(rendered, encoding="utf-8")
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(rendered, encoding="utf-8")
     print(json.dumps(report, indent=2))
 
 

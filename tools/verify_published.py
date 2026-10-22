@@ -51,6 +51,22 @@ test "published native disk API survives reopening" {
 }
 '''
 
+BACKUP_TEST = r'''///|
+test "published backup restores an independently writable log" {
+  let path = @env.current_dir().unwrap() + "/registry-backup-" + @env.now().to_string()
+  let log = @disk.DiskLog::create(path)
+  defer log.close()
+  let head = log.append_batch([b"one", b"two", b"three"])
+  assert_eq(log.backup(path + "-copy"), head)
+  let restored = @disk.DiskLog::open(path + "-copy")
+  defer restored.close()
+  assert_eq(restored.audit(), head)
+  assert_eq(restored.prove_range(1UL, 3UL, 3UL), log.prove_range(1UL, 3UL, 3UL))
+  assert_eq(restored.append(b"copy-only"), 3UL)
+  assert_eq(log.audit(), head)
+}
+'''
+
 
 def run(command, cwd):
     result = subprocess.run(command, cwd=cwd, capture_output=True, encoding="utf-8", timeout=240)
@@ -64,7 +80,10 @@ def main():
     parser.add_argument("--version", default="0.1.0-alpha.1")
     parser.add_argument("--out", type=Path)
     parser.add_argument("--extended", action="store_true", help="Also exercise 0.2 range/wire/shard/disk APIs")
+    parser.add_argument("--backup", action="store_true", help="Also exercise 0.3 native audited backup API; requires --extended")
     args = parser.parse_args()
+    if args.backup and not args.extended:
+        parser.error("--backup requires --extended")
     if not args.version or any(c not in "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-+" for c in args.version):
         raise ValueError("Expected a release version, not a path or dependency expression")
     build = ROOT / "_build"
@@ -93,9 +112,9 @@ def main():
             count = 2
             imports += '"ShiChengxu/moonappend/wire", '
             if target == "native":
-                count = 3
+                count = 4 if args.backup else 3
                 imports += '"ShiChengxu/moonappend/disk", "moonbitlang/core/env", '
-                (consumer / "disk_test.mbt").write_text(DISK_TEST, encoding="utf-8")
+                (consumer / "disk_test.mbt").write_text(DISK_TEST + (BACKUP_TEST if args.backup else ""), encoding="utf-8")
             else:
                 (consumer / "disk_test.mbt").unlink(missing_ok=True)
         (consumer / "moon.pkg").write_text('import { ' + imports + '} for "test"\n', encoding="utf-8")
