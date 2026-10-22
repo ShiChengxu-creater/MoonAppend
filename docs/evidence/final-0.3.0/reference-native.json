@@ -1,0 +1,14 @@
+{
+  "go_reference": {
+    "consistency": 2529,
+    "inclusion": 2529,
+    "roots": 69
+  },
+  "negative_control": "passed",
+  "python_hashlib": {
+    "consistency": 2529,
+    "inclusion": 2529,
+    "roots": 69
+  },
+  "target": "native"
+}

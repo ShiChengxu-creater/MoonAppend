@@ -21,17 +21,37 @@
 | 三个应用流程 | docs/SCENARIOS.md | 39 次存储工作流调用、7 万/14 万叶实测 |
 | 外部可用 API | 各 pkg.generated.mbti | tools/verify_consumer.py；实际打包 ZIP 消费者 |
 | 开源和来源 | LICENSE、THIRD_PARTY.md、AI_USAGE.md | tools/check_repository.py 校验保留的上游文件 |
-| CI | .github/workflows/ci.yml | Linux 三后端；新增 Windows native 任务，须看实际运行结果 |
+| CI | .github/workflows/ci.yml | Linux 三后端；Windows native；实际发布 ZIP 消费者 |
 
 ## 完成门禁
 
 源码修改后执行格式检查、生成 API、三后端 check/build/test、独立参考、存储及备份工作流，
 检查差异后提交并推送。CI 对相应提交执行；运行链接与实际结果须与候选版本对应。
 0.3 已在 Windows 本地通过三后端 check/build/test：native 104/104、wasm-gc 和 JS 各 93/93。
-备份工作流 35 次调用通过。独立参考、完整存储工作流、实际包消费者及远程 CI 仍需本轮复验。
+三后端 Python/Go 双参考、595 compact ranges / 6,545 区间证明对照均通过。
+干净 Git archive 及真实 ZIP 消费者通过：native 各 2 个测试，wasm-gc 和 JS 各 1 个，
+其中 native 使用新增备份 API。完整存储工作流 39 次调用、备份工作流 35 次调用通过；
+实际写进程终止后恢复通过，7 万/14 万叶的根均与独立 hashlib 相同。
+
+功能提交 `88a94ff` 的[远程运行](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/39802259971)
+结果为成功，包含新增 Windows native 任务。补充实际 ZIP 安装门禁的提交 `6b47300`
+的[远程运行](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/39803306034)
+也已通过。源码算法没有在该脚本改进中修改。
+
+本地结构化证据见 [docs/evidence/final-0.3.0](docs/evidence/final-0.3.0/README.md)，
+分别标注参考、工作流和消费者来源。不能把这些结果记作 0.3 的 Mooncakes 安装。
+Windows 快速上手的四段 PowerShell 已逐字执行，增长/区间验证通过，
+分片合并及恢复根一致，备份独立追加后源日志仍为三条。
 
 发布前检查真实 ZIP，在独立消费者中导入根包、wire 和 native disk 的新增 API。
-实际发布由参赛者决定；发布后执行注册表独立安装，记录确切版本和结果，再更新本页。
+实际发布由参赛者决定；发布后执行注册表独立安装，记录确切版本和结果，再更新本页：
+
+```sh
+python tools/verify_published.py --version 0.3.0 --extended --backup --out artifacts/registry-0.3.json
+```
+
+`--backup` 会额外调用新版备份 API：native 应有 4 个测试，wasm-gc 和 JS 各 2 个。
+这条命令在 0.3 真正发布前不记为通过。
 
 ## 最终提交材料
 

@@ -36,6 +36,8 @@ python tools/verify_backup.py
 
 两个 Python 脚本会在 `_build/` 创建独立数据目录，分别运行 39 次存储工作流和 35 次备份恢复命令行验证，包括进程终止恢复、7 万/14 万条实际构树和 18 MiB 载荷备份。需要 Python 3.12+；详细场景和输入文件见 [docs/SCENARIOS.md](docs/SCENARIOS.md)。
 
+逐步运行可用 [Windows 快速上手](docs/QUICKSTART.md)，包含完整输入、命令和预期结果。版本差异见 [CHANGELOG.md](CHANGELOG.md)。
+
 ## 三种使用方式
 
 - **持久化事件日志**：分批追加事件，关闭程序后重新打开，保留历史快照并继续写；读取单条记录，或对整个日志做损坏审计。

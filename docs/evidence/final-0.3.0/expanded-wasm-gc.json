@@ -1,0 +1,8 @@
+{
+  "target": "wasm-gc",
+  "pinned_go_compact": {
+    "compact_ranges": 595,
+    "range_proofs": 6545
+  },
+  "negative_control": "passed"
+}

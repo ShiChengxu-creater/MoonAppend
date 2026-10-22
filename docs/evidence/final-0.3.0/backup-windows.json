@@ -1,0 +1,13 @@
+{
+  "cli_invocations_checked": 35,
+  "copy_matches_committed_files": true,
+  "historical_proofs_preserved": true,
+  "independent_append_after_restore": true,
+  "corrupt_source_refused_before_destination_created": true,
+  "existing_destinations_preserved": true,
+  "empty_backup_writable": true,
+  "large_payload_bytes": 18874368,
+  "large_copy_sha256_matches": true,
+  "incomplete_destination_refused": true,
+  "notes": "No physical power-loss or hostile concurrent file replacement guarantee."
+}

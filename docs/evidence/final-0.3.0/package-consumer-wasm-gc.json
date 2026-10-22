@@ -1,0 +1,7 @@
+{
+  "commit": "88a94ff5a3ee5064257d10e90183744c6f9716dd",
+  "version": "0.3.0",
+  "target": "wasm-gc",
+  "public_api_test_blocks": 1,
+  "source": "moon package archive; not a Mooncakes installation"
+}
