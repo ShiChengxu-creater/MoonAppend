@@ -1,6 +1,6 @@
 # Changes
 
-## 0.3.0 — source candidate, unpublished
+## 0.3.0 — published 2026-10-22
 
 - Native `DiskLog::backup` and CLI `backup`: audit the complete source, copy only
   committed data in bounded chunks, and commit the new checkpoint last. Reopen
@@ -12,6 +12,9 @@
   run on all three portable targets.
 - Add cross-process backup checks with 18 MiB payloads, a Windows native CI job,
   and a final acceptance evidence index. Native disk format remains MADL/1.
+- Install the exact Mooncakes release in a fresh consumer without a workspace
+  override: check/build and 4 native / 2 wasm-gc / 2 JS public API tests pass,
+  including audited backup, preserved interval proofs and independent append.
 
 ## 0.2.0 — published 2026-10-21
 

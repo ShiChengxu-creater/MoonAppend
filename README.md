@@ -2,15 +2,15 @@
 
 MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节点，支持进程重启后继续追加、历史快照、批量提交，以及包含、一致性和连续区间证明。还提供可合并的 compact range，用少量哈希完成分片构树和状态恢复。
 
-当前源码版本为 **0.3.0，尚未发布**，新增全量审计备份和记录解码总字节限额修复。已发布的 **[0.2.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.2.0)** 已通过三个后端的独立安装验证，包含持久化、恢复、区间证明、JSON 和分片构树；不包含新增备份 API。命令行工作流按下文从源码运行。
+当前版本 **[0.3.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.3.0)** 已发布到 Mooncakes，包含全量审计备份和记录解码总字节限额修复，并通过三个后端的独立安装验证。命令行工作流按下文从源码运行。
 
 在调用方模块中安装：
 
 ```sh
-moon add ShiChengxu/moonappend@0.2.0
+moon add ShiChengxu/moonappend@0.3.0
 ```
 
-0.2.0 注册表复验包括 native 3 个、wasm-gc 和 JS 各 2 个公开 API 测试，覆盖区间、JSON、分片状态及 native 磁盘重开。结果见 [发布验证记录](docs/evidence/registry-0.2.0.json)。终验准备状态见 [FINAL_ACCEPTANCE.md](FINAL_ACCEPTANCE.md)。
+0.3.0 注册表复验包括 native 4 个、wasm-gc 和 JS 各 2 个公开 API 测试，覆盖区间、JSON、分片状态、native 磁盘重开、备份及副本独立追加。结果见 [发布验证记录](docs/evidence/registry-0.3.0.json)。终验准备状态见 [FINAL_ACCEPTANCE.md](FINAL_ACCEPTANCE.md)。旧版 0.2.0 的独立安装记录也保留在证据目录中。
 
 ## 模块
 

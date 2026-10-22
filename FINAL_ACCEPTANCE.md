@@ -6,8 +6,8 @@
 ## 交付版本
 
 - GitHub 当前源码 `0.3.0`：在已申报方向内新增审计备份、独立恢复，并修复记录 JSON 解码的累计限额。
-- Mooncakes 已发布 `0.2.0`：三个后端独立安装通过，[结果](docs/evidence/registry-0.2.0.json)。该包不含 0.3 的备份 API。
-- `0.3.0` 尚未发布；不能将 0.2 的安装结果作为 0.3 的注册表证据。
+- Mooncakes 已发布 [0.3.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.3.0)：三个后端检查和构建通过，native 4/4、wasm-gc 和 JS 各 2/2 个独立消费者测试通过，包含备份 API。[注册表结果](docs/evidence/registry-0.3.0.json)。
+- 旧版 `0.2.0` 的[安装结果](docs/evidence/registry-0.2.0.json)保留作历史记录，不替代本次验证。
 
 ## 功能与复核入口
 
@@ -37,6 +37,7 @@
 结果为成功，包含新增 Windows native 任务。补充实际 ZIP 安装门禁的提交 `6b47300`
 的[远程运行](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/39803306034)
 也已通过。源码算法没有在该脚本改进中修改。
+包含完整终验证据和快速上手的提交 `9acfbd7` 的[远程运行](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/39803762302)也已通过。
 
 本地结构化证据见 [docs/evidence/final-0.3.0](docs/evidence/final-0.3.0/README.md)，
 分别标注参考、工作流和消费者来源。不能把这些结果记作 0.3 的 Mooncakes 安装。
@@ -44,14 +45,19 @@ Windows 快速上手的四段 PowerShell 已逐字执行，增长/区间验证�
 分片合并及恢复根一致，备份独立追加后源日志仍为三条。
 
 发布前检查真实 ZIP，在独立消费者中导入根包、wire 和 native disk 的新增 API。
-实际发布由参赛者决定；发布后执行注册表独立安装，记录确切版本和结果，再更新本页：
+参赛者已完成 0.3.0 发布。发布后另建无 `moon.work` 本地替代的独立消费者，执行：
 
 ```sh
 python tools/verify_published.py --version 0.3.0 --extended --backup --out artifacts/registry-0.3.json
 ```
 
-`--backup` 会额外调用新版备份 API：native 应有 4 个测试，wasm-gc 和 JS 各 2 个。
-这条命令在 0.3 真正发布前不记为通过。
+依赖树确认为 `ShiChengxu/moonappend@0.3.0`，三个后端的 check/build 通过；
+native 4/4、wasm-gc 和 JS 各 2/2 个测试通过。`--backup` 实际验证备份重开、
+历史区间证明保留、副本独立追加以及源日志不随副本改变。
+原始结果见 [docs/evidence/registry-0.3.0.json](docs/evidence/registry-0.3.0.json)。
+
+已发布归档的 README 保留打包时的“尚未发布”说明；GitHub README 和本页记录后续发布、
+安装验证状态，不重复上传相同版本。下一步是参赛者核对正式终验材料并提交。
 
 ## 最终提交材料
 
