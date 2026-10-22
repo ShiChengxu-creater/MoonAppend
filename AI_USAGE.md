@@ -10,6 +10,10 @@ interval proofs, storage/checkpoint logic, the native I/O adapter, fault tests,
 CLI workflows and independent scale measurements. These changes are supported
 by runnable tests and do not imply independent security certification.
 
+For final acceptance preparation on 2026-10-22, assistance also covered audited
+backups, bounded copying, backup failure regressions, aggregate record decoding
+limits, Windows CI configuration and the final evidence index.
+
 Quality claims are limited to executable tests and the recorded targets and
 versions. Production MoonBit, handwritten tests, generated test vectors and
 vendored Go reference code are counted separately. The work does not claim that

@@ -59,10 +59,13 @@ fn run(args : Array[String], destination : String?) -> Unit raise Error {
       raise CliError("HELP_HAS_NO_OUTPUT_FILE")
     }
     display(
-      "MoonAppend 0.2.0 native CLI; all indices are zero-based, ranges are [start,end)",
+      "MoonAppend 0.3.0 native CLI; all indices are zero-based, ranges are [start,end)",
     )
     display(
       "init DIR | append DIR RECORDS.json | snapshot DIR SIZE | audit DIR",
+    )
+    display(
+      "backup DIR NEW_DIR (audited committed copy; reopen NEW_DIR to restore)",
     )
     display(
       "inclusion DIR INDEX SIZE | consistency DIR OLD_SIZE NEW_SIZE | range DIR START END SIZE",
@@ -103,6 +106,12 @@ fn run(args : Array[String], destination : String?) -> Unit raise Error {
       let log = @disk.DiskLog::open(args[2])
       defer log.close()
       display(@wire.encode_snapshot(log.snapshot_at(@wire.parse_size(args[3]))))
+    }
+    "backup" => {
+      require_args(args, 4)
+      let log = @disk.DiskLog::open(args[2])
+      defer log.close()
+      display(@wire.encode_snapshot(log.backup(args[3])))
     }
     "audit" => {
       require_args(args, 3)

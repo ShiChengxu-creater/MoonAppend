@@ -2,7 +2,7 @@
 
 MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节点，支持进程重启后继续追加、历史快照、批量提交，以及包含、一致性和连续区间证明。还提供可合并的 compact range，用少量哈希完成分片构树和状态恢复。
 
-当前版本 **[0.2.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.2.0)** 已发布到 Mooncakes，并通过三个后端的独立安装验证。旧版 `0.1.0-alpha.1` 只有基础内存功能。命令行工作流按下文从源码运行；正式申报前仍需参赛者核对材料。
+当前源码版本为 **0.3.0，尚未发布**，新增全量审计备份和记录解码总字节限额修复。已发布的 **[0.2.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.2.0)** 已通过三个后端的独立安装验证，包含持久化、恢复、区间证明、JSON 和分片构树；不包含新增备份 API。命令行工作流按下文从源码运行。
 
 在调用方模块中安装：
 
@@ -10,7 +10,7 @@ MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节�
 moon add ShiChengxu/moonappend@0.2.0
 ```
 
-注册表复验包括 native 3 个、wasm-gc 和 JS 各 2 个公开 API 测试，覆盖新增的区间、JSON、分片状态及 native 磁盘重开。结果见 [发布验证记录](docs/evidence/registry-0.2.0.json)。
+0.2.0 注册表复验包括 native 3 个、wasm-gc 和 JS 各 2 个公开 API 测试，覆盖区间、JSON、分片状态及 native 磁盘重开。结果见 [发布验证记录](docs/evidence/registry-0.2.0.json)。终验准备状态见 [FINAL_ACCEPTANCE.md](FINAL_ACCEPTANCE.md)。
 
 ## 模块
 
@@ -18,7 +18,7 @@ moon add ShiChengxu/moonappend@0.2.0
 | --- | --- | --- |
 | `ShiChengxu/moonappend` | 内存日志、批量追加、compact range、三类证明、外部节点读取接口 | native / wasm-gc / JS |
 | `ShiChengxu/moonappend/wire` | 严格 JSON 快照、证明、十六进制记录交换 | native / wasm-gc / JS |
-| `ShiChengxu/moonappend/disk` | 磁盘日志、提交检查点、重启恢复、随机读取和全量审计 | native |
+| `ShiChengxu/moonappend/disk` | 磁盘日志、提交检查点、重启恢复、随机读取、全量审计和独立备份 | native |
 | `cmd/moonappend` | 上述能力的文件命令行入口 | native |
 
 树、证明、序列化、提交顺序和恢复判断使用 MoonBit 实现。小型 C 适配层只负责文件偏移读写、同步、原子替换、Unicode 路径和操作系统锁。默认后端改为 native；便携核心也持续在另外两个后端验证。
@@ -31,9 +31,10 @@ moon add ShiChengxu/moonappend@0.2.0
 moon update
 moon run cmd/moonappend --target native -- --help
 python tools/verify_storage_cli.py
+python tools/verify_backup.py
 ```
 
-最后一条命令会在 `_build/` 创建独立数据目录，运行 39 次命令行验证，包括进程终止恢复及 7 万、14 万条记录的实际构树。需要 Python 3.12+；详细场景和输入文件见 [docs/SCENARIOS.md](docs/SCENARIOS.md)。
+两个 Python 脚本会在 `_build/` 创建独立数据目录，分别运行 39 次存储工作流和 35 次备份恢复命令行验证，包括进程终止恢复、7 万/14 万条实际构树和 18 MiB 载荷备份。需要 Python 3.12+；详细场景和输入文件见 [docs/SCENARIOS.md](docs/SCENARIOS.md)。
 
 ## 三种使用方式
 
@@ -59,6 +60,9 @@ assert_true(@tree.verify_range(head, 1UL, [b"two", b"three"], proof).is_verified
 
 上述调用可能抛出错误，应放在可抛出错误的函数或测试中。磁盘调用方导入 `ShiChengxu/moonappend/disk`，使用 `DiskLog::create/open`、`append_batch`、`snapshot_at`、`prove_range`、`read_entry` 和 `audit`；使用结束必须 `close`。
 
+0.3 源码新增 `log.backup(NEW_DIR)`：先全量审计，再分块复制已提交内容，最后提交目标检查点。
+通过 `DiskLog::open(NEW_DIR)` 恢复；副本可以独立追加。CLI 为 `backup DIR NEW_DIR`，目标目录必须不存在。
+
 公开 API 由 `moon info` 生成：根目录、`wire/` 和 `disk/` 各有 `pkg.generated.mbti`。外部消费者验证见 `tools/verify_consumer.py`，不会依赖包内私有字段。
 
 ## 存储与信任边界
@@ -71,7 +75,7 @@ assert_true(@tree.verify_range(head, 1UL, [b"two", b"three"], proof).is_verified
 
 ## 验证与规模记录
 
-本地已通过 native **98** 个测试块，wasm-gc、JS 各 **92** 个。另有独立 Python/Go 根与 RFC 证明对照、595 个 compact range 和 6,545 个区间证明的 Go 对照、干净消费者及 CLI 验证。测试数量不是覆盖率。
+0.3 源码本地已通过 native **104** 个测试块，wasm-gc、JS 各 **93** 个。0.2 的独立 Python/Go 根与 RFC 证明对照、595 个 compact range 和 6,545 个区间证明的 Go 对照记录仍单独保留；当前提交的复验状态见终验准备记录。测试数量不是覆盖率。
 
 ```sh
 moon fmt --check
@@ -82,6 +86,7 @@ python tools/verify_reference.py --target native --go go
 python tools/verify_expanded_reference.py --target native --go go
 python tools/verify_consumer.py --target native
 python tools/verify_storage_cli.py
+python tools/verify_backup.py
 ```
 
 核心命令也分别替换为 `wasm-gc` 和 `js` 运行；磁盘与 CLI 仅 native。Go 对照使用仓库保留的锁定源码，离线 `-mod=vendor` 构建，需要 Go 1.22.7+。CI 使用 Go 1.27.2、Python 3.12、Node.js 22，并保存参考与存储实测附件。

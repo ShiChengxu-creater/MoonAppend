@@ -28,6 +28,7 @@ pub struct DiskLog {
 pub fn DiskLog::append(Self, Bytes) -> UInt64 raise
 pub fn DiskLog::append_batch(Self, Array[Bytes]) -> @moonappend.Snapshot raise
 pub fn DiskLog::audit(Self) -> @moonappend.Snapshot raise
+pub fn DiskLog::backup(Self, String) -> @moonappend.Snapshot raise
 pub fn DiskLog::close(Self) -> Unit
 pub fn DiskLog::create(String) -> Self raise
 pub fn DiskLog::open(String) -> Self raise
