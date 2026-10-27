@@ -35,7 +35,7 @@ python tools/verify_backup.py
 python tools/verify_paths.py
 ```
 
-两个 Python 脚本会在 `_build/` 创建独立数据目录，分别运行 39 次存储工作流和 35 次备份恢复命令行验证，包括进程终止恢复、7 万/14 万条实际构树和 18 MiB 载荷备份。需要 Python 3.12+；详细场景和输入文件见 [docs/SCENARIOS.md](docs/SCENARIOS.md)。
+存储与备份脚本会在 `_build/` 创建独立数据目录，分别运行 39 次存储工作流和 35 次备份恢复命令行验证，包括进程终止恢复、7 万/14 万条实际构树和 18 MiB 载荷备份。路径脚本另建消费者，检查切换工作目录后的相对路径和 Unicode 路径行为。需要 Python 3.12+；详细场景和输入文件见 [docs/SCENARIOS.md](docs/SCENARIOS.md)。
 
 逐步运行可用 [Windows 快速上手](docs/QUICKSTART.md)，包含完整输入、命令和预期结果。版本差异见 [CHANGELOG.md](CHANGELOG.md)。
 
