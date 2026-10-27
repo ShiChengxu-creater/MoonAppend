@@ -9,6 +9,8 @@
 - Add isolated native public API regressions for relative create/open, Unicode
   paths, historical proofs and independently writable backups. Gate them on
   Linux and Windows. Public APIs and MADL/1 storage format are unchanged.
+- Require an explicit `--version` when verifying a registry release, so omitting
+  it cannot silently verify the old 0.1.0-alpha.1 package.
 
 ## 0.3.0 — published 2026-10-22
 

@@ -77,7 +77,7 @@ def run(command, cwd):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", default="0.1.0-alpha.1")
+    parser.add_argument("--version", required=True, help="Exact Mooncakes release to install and verify")
     parser.add_argument("--out", type=Path)
     parser.add_argument("--extended", action="store_true", help="Also exercise 0.2 range/wire/shard/disk APIs")
     parser.add_argument("--backup", action="store_true", help="Also exercise 0.3 native audited backup API; requires --extended")
