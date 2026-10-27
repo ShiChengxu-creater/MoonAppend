@@ -1,6 +1,6 @@
 # 0.3.1 工作目录切换修复
 
-2026-10-27（Asia/Shanghai）。本页对应尚未发布的 0.3.1 源码。
+2026-10-27（Asia/Shanghai）。0.3.1 已发布，源码、实际包归档和注册表消费者分别验证。
 
 ## 已复现的问题
 
@@ -43,4 +43,13 @@ Windows 本地 native 105/105 个测试块通过，wasm-gc 和 JS 各 93/93，�
 功能提交 `436918c` 的 [Linux/Windows CI](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/40463564290)
 已通过，包括两种 OS 的工作目录切换回归。原始结果见 [evidence/path-0.3.1](evidence/path-0.3.1/README.md)。
 发布验证脚本现要求显式 `--version`，缺省参数会拒绝运行，避免静默检查旧预览版。
-0.3.0 的历史测试和注册表安装证据继续保留，0.3.1 发布前不宣称注册表复验完成。
+包含最终修复说明的提交 `bdd13e6` 的 [CI](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/40464154792) 也已通过。
+
+发布后运行 `python tools/verify_published.py --version 0.3.1 --extended --backup`，
+三个后端 check/build 和 native 4/4、wasm-gc / JS 各 2/2 个测试均通过。
+另运行 `python tools/verify_paths.py --registry-version 0.3.1`，在没有本地工作区替代的
+注册表消费者中，Windows native 的相对创建、相对打开、备份、Unicode 路径、历史一致性
+及另一同名日志保持不变的检查均通过。依赖树确认为 `ShiChengxu/moonappend@0.3.1`。
+结果见 [registry-0.3.1.json](evidence/registry-0.3.1.json) 与
+[registry-paths-0.3.1.json](evidence/registry-paths-0.3.1.json)。
+0.3.0 的历史测试和安装证据继续保留；跨版本数据升级和多轮恢复压力验证仍为后续工作。

@@ -8,4 +8,6 @@
 - `package-consumer-native/wasm-gc/js.json`：真实 0.3.1 ZIP 公开 API 消费者通过。
 
 native 105 个测试块、wasm-gc 和 JS 各 93 个另已运行通过，数量不等于覆盖率。
-Linux 和 Windows CI 链接见 `docs/PATH_FIX.md`；0.3.1 尚未发布，以上不是注册表安装证据。
+Linux 和 Windows CI 链接见 `docs/PATH_FIX.md`；以上保留源码与本地包归档证据。
+0.3.1 发布后另完成注册表复验，原始结果为 [../registry-0.3.1.json](../registry-0.3.1.json)
+和 [../registry-paths-0.3.1.json](../registry-paths-0.3.1.json)，没有本地工作区替代。

@@ -7,8 +7,11 @@ file-backed logs with recovery, audit and CLI workflows.
 
 Portable core and wire support native, wasm-gc and JS. Disk and CLI are native.
 The three workflows are persistent events, interval receipts and shard merge/resume.
-Current source version 0.3.1 is unpublished and fixes log-directory binding across
-process working-directory changes. See PATH_FIX.md for the reproducer and checks.
+Current version 0.3.1 is published and fixes log-directory binding across process
+working-directory changes. Fresh registry consumers passed 4 native / 2 wasm-gc /
+2 JS public API tests and the Windows native working-directory regression, without
+a local workspace override. See evidence/registry-0.3.1.json,
+evidence/registry-paths-0.3.1.json and PATH_FIX.md.
 Version 0.3.0 is published on Mooncakes. It adds audited independent backups
 and an aggregate byte-budget fix for record decoding. A fresh registry consumer,
 without a local workspace override, passed check/build and 4 native / 2 wasm-gc /

@@ -5,7 +5,7 @@
 
 ## 交付版本
 
-- 当前源码候选 `0.3.1`：修复日志的相对目录绑定，尚未发布；本轮检查见 [docs/PATH_FIX.md](docs/PATH_FIX.md)。
+- 当前交付版本 [0.3.1](https://mooncakes.io/docs/ShiChengxu/moonappend@0.3.1) 已发布，修复日志的相对目录绑定；本轮检查见 [docs/PATH_FIX.md](docs/PATH_FIX.md)。三个后端注册表检查、构建及 native 4/4、wasm-gc / JS 各 2/2 个测试通过，另验证 Windows native 发布包的目录切换行为。
 - `0.3.0`：在已申报方向内新增审计备份、独立恢复，并修复记录 JSON 解码的累计限额。
 - Mooncakes 已发布 [0.3.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.3.0)：三个后端检查和构建通过，native 4/4、wasm-gc 和 JS 各 2/2 个独立消费者测试通过，包含备份 API。[注册表结果](docs/evidence/registry-0.3.0.json)。
 - 旧版 `0.2.0` 的[安装结果](docs/evidence/registry-0.2.0.json)保留作历史记录，不替代本次验证。
@@ -27,7 +27,12 @@
 ## 完成门禁
 
 下述完整矩阵及注册表记录对应已发布 0.3.0，不替代 0.3.1 的本轮证据。
-参赛者确认终验日期为 2026-10-30；0.3.1 正式交付前仍需对应 CI、打包、发布及注册表复验。
+参赛者确认终验日期为 2026-10-30。0.3.1 本地 native 105/105、wasm-gc 和 JS 各 93/93，
+存储/备份工作流、三个后端的真实 ZIP 消费者和对应 Linux/Windows CI 已通过。
+注册表独立安装及 Windows native 路径专项复验也已完成，结果见
+[registry-0.3.1.json](docs/evidence/registry-0.3.1.json) 和
+[registry-paths-0.3.1.json](docs/evidence/registry-paths-0.3.1.json)。
+本轮没有把后续计划中的跨版本数据升级、多轮恢复压力验证记为完成。
 
 源码修改后执行格式检查、生成 API、三后端 check/build/test、独立参考、存储及备份工作流，
 检查差异后提交并推送。CI 对相应提交执行；运行链接与实际结果须与候选版本对应。

@@ -1,6 +1,6 @@
 # Changes
 
-## 0.3.1 — source candidate, unpublished
+## 0.3.1 — published 2026-10-27
 
 - Bind disk log directories to absolute paths when creating or opening them.
   Appending after the caller changes its working directory now updates the
@@ -11,6 +11,9 @@
   Linux and Windows. Public APIs and MADL/1 storage format are unchanged.
 - Require an explicit `--version` when verifying a registry release, so omitting
   it cannot silently verify the old 0.1.0-alpha.1 package.
+- Verify the exact Mooncakes release in fresh consumers: 4 native / 2 wasm-gc /
+  2 JS tests and a separate Windows native working-directory regression pass,
+  without any local workspace override.
 
 ## 0.3.0 — published 2026-10-22
 

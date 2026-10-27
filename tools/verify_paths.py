@@ -90,8 +90,11 @@ fn main { try! exercise() }
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", type=Path, default=ROOT / "artifacts/paths.json")
+    parser.add_argument("--registry-version", help="Install this exact Mooncakes version instead of using local source")
     args = parser.parse_args()
-    version = re.search(r'^version\s*=\s*"([^"]+)"', (ROOT / "moon.mod").read_text(encoding="utf-8"), re.M).group(1)
+    if args.registry_version is not None and not re.fullmatch(r"[0-9A-Za-z.+-]+", args.registry_version):
+        parser.error("--registry-version expects a release version")
+    version = args.registry_version or re.search(r'^version\s*=\s*"([^"]+)"', (ROOT / "moon.mod").read_text(encoding="utf-8"), re.M).group(1)
     build = (ROOT / "_build").resolve()
     build.mkdir(exist_ok=True)
     work = Path(tempfile.mkdtemp(prefix="path-regression-", dir=build)).resolve()
@@ -102,20 +105,39 @@ def main():
     left, right = work / "left", work / "right"
     left.mkdir()
     right.mkdir()
-    (work / "moon.work").write_text('members = [ ' + json.dumps(ROOT.as_posix(), ensure_ascii=False) + ', "./consumer" ]\n', encoding="utf-8")
+    if args.registry_version:
+        for parent in [consumer, *consumer.parents]:
+            if (parent / "moon.work").exists():
+                raise RuntimeError(f"A workspace could substitute local source: {parent}")
+    else:
+        (work / "moon.work").write_text('members = [ ' + json.dumps(ROOT.as_posix(), ensure_ascii=False) + ', "./consumer" ]\n', encoding="utf-8")
     (consumer / "moon.mod").write_text('name = "local/path_regression"\nversion = "0.0.0"\nimport { "ShiChengxu/moonappend@' + version + '" }\n', encoding="utf-8")
     (consumer / "moon.pkg").write_text('import { "ShiChengxu/moonappend" @tree, "ShiChengxu/moonappend/disk", "moonbitlang/core/env", "moonbitlang/core/encoding/utf8" }\npkgtype(kind: "executable")\nsupported_targets = "native"\noptions("native-stub": ["cwd.c"])\n', encoding="utf-8")
     (consumer / "cwd.c").write_text(CWD_HELPER, encoding="utf-8")
     program = PROGRAM.replace("LEFT_PATH", json.dumps(left.as_posix(), ensure_ascii=False)).replace("RIGHT_PATH", json.dumps(right.as_posix(), ensure_ascii=False))
     (consumer / "main.mbt").write_text(program, encoding="utf-8")
-    result = subprocess.run(["moon", "run", "--target", "native", "--deny-warn", str(consumer)], cwd=work,
+    dependency_tree = None
+    if args.registry_version:
+        for command in [["moon", "update"], ["moon", "add", f"ShiChengxu/moonappend@{version}"], ["moon", "tree"]]:
+            installed = subprocess.run(command, cwd=consumer, capture_output=True, encoding="utf-8", timeout=180)
+            if installed.returncode:
+                raise RuntimeError(f"Registry setup failed: {command}\n{installed.stdout}\n{installed.stderr}")
+            if command == ["moon", "tree"]:
+                dependency_tree = installed.stdout
+        if f"ShiChengxu/moonappend@{version}" not in dependency_tree:
+            raise AssertionError("Expected exact registry version in dependency tree")
+    run_directory = consumer if args.registry_version else work
+    result = subprocess.run(["moon", "run", "--target", "native", "--deny-warn", str(consumer)], cwd=run_directory,
                             capture_output=True, encoding="utf-8", errors="replace", timeout=180)
     if result.returncode or "PATH_REGRESSION_OK" not in result.stdout:
         raise RuntimeError(f"Path regression failed\n{result.stdout}\n{result.stderr}")
-    report = {"version": version, "source": "local source consumer; not a registry installation",
+    report = {"version": version, "source": "Mooncakes registry" if args.registry_version else "local source consumer; not a registry installation",
               "relative_create_survives_chdir": True, "relative_open_survives_chdir": True,
               "same_named_other_log_unchanged": True, "relative_backup_reopens_and_appends": True,
               "unicode_paths": True, "historical_consistency_verified": True}
+    if args.registry_version:
+        report["local_workspace_override"] = False
+        report["dependency_tree"] = "\n".join(dependency_tree.strip().splitlines()[1:])
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
