@@ -1,0 +1,7 @@
+{
+  "source": "local source 0.3.0 public disk API; isolated disposable directories",
+  "reported_committed_records": 2,
+  "original_reopened_records": 1,
+  "second_log_rejected": true,
+  "confirmed": true
+}

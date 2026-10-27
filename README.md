@@ -78,7 +78,7 @@ assert_true(@tree.verify_range(head, 1UL, [b"two", b"three"], proof).is_verified
 
 ## 验证与规模记录
 
-0.3.0 的本地记录为 native **104** 个测试块，wasm-gc、JS 各 **93** 个。0.3.1 源码已通过 native **105** 个测试块和工作目录切换回归；其余本轮检查状态见 [路径修复记录](docs/PATH_FIX.md)。历史独立参考和消费者记录单独保留，测试数量不是覆盖率。
+0.3.1 源码本地通过 native **105** 个测试块，wasm-gc、JS 各 **93** 个，以及工作目录切换回归、原有存储/备份流程和三后端真实 ZIP 消费者。功能提交的 Linux/Windows CI 已通过，见 [路径修复记录](docs/PATH_FIX.md)。0.3.0 的历史参考、测试及注册表结果单独保留，测试数量不是覆盖率。
 
 ```sh
 moon fmt --check

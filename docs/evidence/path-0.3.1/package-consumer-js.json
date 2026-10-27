@@ -1,0 +1,7 @@
+{
+  "commit": "436918c774c13198e27f23f2dacded72a88b8e58",
+  "version": "0.3.1",
+  "target": "js",
+  "public_api_test_blocks": 1,
+  "source": "moon package archive; not a Mooncakes installation"
+}

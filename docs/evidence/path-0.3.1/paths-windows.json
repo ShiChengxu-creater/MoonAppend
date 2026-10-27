@@ -1,0 +1,10 @@
+{
+  "version": "0.3.1",
+  "source": "local source consumer; not a registry installation",
+  "relative_create_survives_chdir": true,
+  "relative_open_survives_chdir": true,
+  "same_named_other_log_unchanged": true,
+  "relative_backup_reopens_and_appends": true,
+  "unicode_paths": true,
+  "historical_consistency_verified": true
+}

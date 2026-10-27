@@ -35,6 +35,12 @@ Linux 和 Windows CI 都执行这项回归。目录及符号链接仍须由调�
 
 ## 本轮结果
 
-Windows 本地 native 105/105 个测试块通过；新增独立消费者回归通过。
-完整存储/备份流程、其余后端、实际 ZIP 消费者及远程 CI 待本轮复验。
+Windows 本地 native 105/105 个测试块通过，wasm-gc 和 JS 各 93/93，便携后端 check/build 通过；
+新增工作目录回归、39 次存储流程、35 次备份流程及 7 万/14 万叶构树通过。
+三个后端的真实 ZIP 消费者通过：native 2 个测试，wasm-gc 和 JS 各 1 个。
+以上消费者验证使用当前源码打包，不是注册表安装。
+
+功能提交 `436918c` 的 [Linux/Windows CI](https://github.com/ShiChengxu-creater/MoonAppend/actions/runs/40463564290)
+已通过，包括两种 OS 的工作目录切换回归。原始结果见 [evidence/path-0.3.1](evidence/path-0.3.1/README.md)。
+发布验证脚本现要求显式 `--version`，缺省参数会拒绝运行，避免静默检查旧预览版。
 0.3.0 的历史测试和注册表安装证据继续保留，0.3.1 发布前不宣称注册表复验完成。
