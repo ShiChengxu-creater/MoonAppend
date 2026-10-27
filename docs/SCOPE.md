@@ -7,7 +7,9 @@ file-backed logs with recovery, audit and CLI workflows.
 
 Portable core and wire support native, wasm-gc and JS. Disk and CLI are native.
 The three workflows are persistent events, interval receipts and shard merge/resume.
-Current version 0.3.0 is published on Mooncakes. It adds audited independent backups
+Current source version 0.3.1 is unpublished and fixes log-directory binding across
+process working-directory changes. See PATH_FIX.md for the reproducer and checks.
+Version 0.3.0 is published on Mooncakes. It adds audited independent backups
 and an aggregate byte-budget fix for record decoding. A fresh registry consumer,
 without a local workspace override, passed check/build and 4 native / 2 wasm-gc /
 2 JS public API tests. Evidence is in evidence/registry-0.3.0.json. See

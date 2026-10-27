@@ -8,6 +8,19 @@ pub extend StorageError with @debug.Debug::{to_repr}
 
 ///|
 #borrow(path)
+extern "C" fn io_absolute_directory(path : Bytes) -> Bytes = "ma_absolute_directory"
+
+///|
+fn absolute_directory(path : String) -> String raise Error {
+  let resolved = io_absolute_directory(path_bytes(path))
+  if resolved.is_empty() {
+    raise StorageError("DIRECTORY_RESOLUTION_FAILED")
+  }
+  @utf8.decode(resolved[:], ignore_bom=false)
+}
+
+///|
+#borrow(path)
 extern "C" fn io_mkdir(path : Bytes) -> Int = "ma_mkdir"
 
 ///|

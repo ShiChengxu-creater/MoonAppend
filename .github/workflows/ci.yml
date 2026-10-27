@@ -59,6 +59,9 @@ jobs:
       - name: Audited backup and restore workflows
         if: matrix.target == 'native'
         run: python tools/verify_backup.py --out artifacts/backup-linux.json
+      - name: Relative paths remain bound across working-directory changes
+        if: matrix.target == 'native'
+        run: python tools/verify_paths.py --out artifacts/paths-linux.json
       - name: Verify reference provenance and commit history
         run: python tools/check_repository.py
       - name: Reproduce generated Go vectors and public API
@@ -77,6 +80,7 @@ jobs:
             artifacts/expanded-${{ matrix.target }}.json
             artifacts/storage-cli-linux.json
             artifacts/backup-linux.json
+            artifacts/paths-linux.json
             artifacts/package-consumer-${{ matrix.target }}.json
   windows-native:
     runs-on: windows-2022
@@ -116,6 +120,8 @@ jobs:
         run: python tools/verify_storage_cli.py --out artifacts/storage-cli-windows.json
       - name: Audited backup and restore workflows
         run: python tools/verify_backup.py --out artifacts/backup-windows.json
+      - name: Relative paths remain bound across working-directory changes
+        run: python tools/verify_paths.py --out artifacts/paths-windows.json
       - name: Clean native public API consumer
         run: python tools/verify_consumer.py --target native
       - name: Actual native package archive consumer
@@ -126,4 +132,5 @@ jobs:
           path: |
             artifacts/storage-cli-windows.json
             artifacts/backup-windows.json
+            artifacts/paths-windows.json
             artifacts/package-consumer-windows.json

@@ -2,7 +2,7 @@
 
 MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节点，支持进程重启后继续追加、历史快照、批量提交，以及包含、一致性和连续区间证明。还提供可合并的 compact range，用少量哈希完成分片构树和状态恢复。
 
-当前版本 **[0.3.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.3.0)** 已发布到 Mooncakes，包含全量审计备份和记录解码总字节限额修复，并通过三个后端的独立安装验证。命令行工作流按下文从源码运行。
+当前源码为 **0.3.1，尚未发布**，修复磁盘日志使用相对路径后切换工作目录可能提交到其他目录的问题。已发布的 **[0.3.0](https://mooncakes.io/docs/ShiChengxu/moonappend@0.3.0)** 包含审计备份，并通过三个后端的独立安装验证。0.3.0 磁盘调用方应传入绝对路径；使用相对路径时，须在关闭日志前保持进程工作目录不变。问题和回归说明见 [docs/PATH_FIX.md](docs/PATH_FIX.md)。
 
 在调用方模块中安装：
 
@@ -32,6 +32,7 @@ moon update
 moon run cmd/moonappend --target native -- --help
 python tools/verify_storage_cli.py
 python tools/verify_backup.py
+python tools/verify_paths.py
 ```
 
 两个 Python 脚本会在 `_build/` 创建独立数据目录，分别运行 39 次存储工作流和 35 次备份恢复命令行验证，包括进程终止恢复、7 万/14 万条实际构树和 18 MiB 载荷备份。需要 Python 3.12+；详细场景和输入文件见 [docs/SCENARIOS.md](docs/SCENARIOS.md)。
@@ -77,7 +78,7 @@ assert_true(@tree.verify_range(head, 1UL, [b"two", b"three"], proof).is_verified
 
 ## 验证与规模记录
 
-0.3 源码本地已通过 native **104** 个测试块，wasm-gc、JS 各 **93** 个。0.2 的独立 Python/Go 根与 RFC 证明对照、595 个 compact range 和 6,545 个区间证明的 Go 对照记录仍单独保留；当前提交的复验状态见终验准备记录。测试数量不是覆盖率。
+0.3.0 的本地记录为 native **104** 个测试块，wasm-gc、JS 各 **93** 个。0.3.1 源码已通过 native **105** 个测试块和工作目录切换回归；其余本轮检查状态见 [路径修复记录](docs/PATH_FIX.md)。历史独立参考和消费者记录单独保留，测试数量不是覆盖率。
 
 ```sh
 moon fmt --check

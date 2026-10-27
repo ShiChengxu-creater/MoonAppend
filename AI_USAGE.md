@@ -14,6 +14,11 @@ For final acceptance preparation on 2026-10-22, assistance also covered audited
 backups, bounded copying, backup failure regressions, aggregate record decoding
 limits, Windows CI configuration and the final evidence index.
 
+On 2026-10-27, assistance also covered reproducing a relative-directory binding
+defect in an isolated consumer, fixing native path binding and adding regression
+checks. The original and unrelated log directories in the reproducer are generated
+test fixtures, not user data.
+
 Quality claims are limited to executable tests and the recorded targets and
 versions. Production MoonBit, handwritten tests, generated test vectors and
 vendored Go reference code are counted separately. The work does not claim that

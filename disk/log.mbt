@@ -71,6 +71,7 @@ pub fn DiskLog::create(path : String) -> DiskLog raise Error {
   if io_mkdir(path_bytes(path)) != 0 {
     raise StorageError("DIRECTORY_EXISTS_OR_CREATE_FAILED")
   }
+  let path = absolute_directory(path)
   let files = open_files(path, true)
   errdefer (for fd in files {
     ignore(io_close(fd))
@@ -91,6 +92,7 @@ pub fn DiskLog::create(path : String) -> DiskLog raise Error {
 
 ///|
 pub fn DiskLog::open(path : String) -> DiskLog raise Error {
+  let path = absolute_directory(path)
   let files = open_files(path, false)
   errdefer (for fd in files {
     ignore(io_close(fd))

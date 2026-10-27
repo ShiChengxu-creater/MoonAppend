@@ -1,5 +1,15 @@
 # Changes
 
+## 0.3.1 — source candidate, unpublished
+
+- Bind disk log directories to absolute paths when creating or opening them.
+  Appending after the caller changes its working directory now updates the
+  original checkpoint and preserves another directory's same-named log.
+- Resolve new backup directories before opening their files and committing state.
+- Add isolated native public API regressions for relative create/open, Unicode
+  paths, historical proofs and independently writable backups. Gate them on
+  Linux and Windows. Public APIs and MADL/1 storage format are unchanged.
+
 ## 0.3.0 — published 2026-10-22
 
 - Native `DiskLog::backup` and CLI `backup`: audit the complete source, copy only

@@ -4,6 +4,7 @@
  * (Apache-2.0); source and exact reference are recorded in THIRD_PARTY.md. */
 #ifndef _WIN32
 #define _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 700
 #define _FILE_OFFSET_BITS 64
 #endif
 #include "moonbit.h"
@@ -13,11 +14,13 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <string.h>
 #ifdef _WIN32
 #include <windows.h>
 #include <io.h>
 #include <direct.h>
 #include <share.h>
+#include <wchar.h>
 static wchar_t *ma_wide(const char *s) {
   int n = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s, -1, NULL, 0);
   if (!n) return NULL;
@@ -31,6 +34,43 @@ static wchar_t *ma_wide(const char *s) {
 #include <sys/file.h>
 #define MA_CLOSE close
 #endif
+
+/* Resolve an existing directory once, before retaining it across operations.
+ * Empty bytes report failure; all successful results are absolute UTF-8 paths. */
+MOONBIT_FFI_EXPORT moonbit_bytes_t ma_absolute_directory(moonbit_bytes_t path) {
+#ifdef _WIN32
+  wchar_t *w = ma_wide((char *)path);
+  if (!w) return moonbit_make_bytes(0, 0);
+  wchar_t *full = _wfullpath(NULL, w, 0);
+  free(w);
+  if (!full) return moonbit_make_bytes(0, 0);
+  struct _stat64 st;
+  if (_wstat64(full, &st) || (st.st_mode & _S_IFMT) != _S_IFDIR) {
+    free(full); return moonbit_make_bytes(0, 0);
+  }
+  size_t length = wcslen(full);
+  if (length > 32767) { free(full); return moonbit_make_bytes(0, 0); }
+  int size = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, full, (int)length, NULL, 0, NULL, NULL);
+  if (size <= 0) { free(full); return moonbit_make_bytes(0, 0); }
+  moonbit_bytes_t out = moonbit_make_bytes(size, 0);
+  int copied = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, full, (int)length, (char *)out, size, NULL, NULL);
+  free(full);
+  if (copied != size) { moonbit_decref(out); return moonbit_make_bytes(0, 0); }
+  return out;
+#else
+  char *full = realpath((char *)path, NULL);
+  if (!full) return moonbit_make_bytes(0, 0);
+  struct stat st;
+  size_t size = strlen(full);
+  if (stat(full, &st) || !S_ISDIR(st.st_mode) || size == 0 || size > 1048576) {
+    free(full); return moonbit_make_bytes(0, 0);
+  }
+  moonbit_bytes_t out = moonbit_make_bytes((int32_t)size, 0);
+  memcpy(out, full, size);
+  free(full);
+  return out;
+#endif
+}
 
 MOONBIT_FFI_EXPORT int ma_mkdir(moonbit_bytes_t path) {
 #ifdef _WIN32

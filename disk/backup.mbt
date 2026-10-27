@@ -23,6 +23,7 @@ fn DiskLog::backup_to(
   if io_mkdir(path_bytes(destination)) != 0 {
     raise StorageError("BACKUP_DIRECTORY_CREATE_FAILED")
   }
+  let destination = absolute_directory(destination)
   let files = open_files(destination, true)
   defer {
     for i in 1..<files.length() {
