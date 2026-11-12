@@ -1,5 +1,5 @@
 ///|
-fn split_size(count : Int) -> Int {
+fn split_size(count : Int32) -> Int32 {
   let mut k = 1
   while k * 2 < count {
     k = k * 2
@@ -23,7 +23,7 @@ fn root_from_hashes(leaves : ArrayView[Hash32]) -> Hash32 {
 /// Bounded reference-style construction. Leaf order is never sorted or padded.
 pub fn tree_root(
   leaves : Array[Bytes],
-  limits? : Limits = { leaves: 65536, bytes: 67108864, },
+  limits~ : Limits = { leaves: 65536, bytes: 67108864, },
 ) -> Hash32 raise AppendError {
   if leaves.length() > limits.leaves {
     raise LeafLimit

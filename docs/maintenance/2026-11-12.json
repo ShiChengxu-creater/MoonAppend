@@ -1,0 +1,343 @@
+{
+  "date": "2026-11-12",
+  "timezone": "Asia/Shanghai",
+  "status": "pass",
+  "scope": "maintained working-tree source and local package archive; no new registry publication",
+  "baseline_commit": "e6751adfe7935b92d7c75161401a14cf287da2a2",
+  "validated_at": "2026-11-12T08:35:41.236822+00:00",
+  "toolchain": [
+    "moon 0.1.20261104 (940aa18 2026-11-04)",
+    "moonc v0.10.20+65efd5b93 (2026-11-05)",
+    "moonrun 0.1.20261104 (940aa18 2026-11-04)"
+  ],
+  "feature_flags": [
+    "rr_moon_mod",
+    "rr_moon_pkg"
+  ],
+  "official_download": "https://www.moonbitlang.com/download/",
+  "official_windows_archive_sha256": "bdff9a3b2d7c61a3adae2fe09221d3de63effc6cab28bfa0cbeb94fb0d529d79",
+  "platform": "Windows x64 / MSVC",
+  "python": "3.13.9",
+  "node": "24.22.1",
+  "tests_passed": {
+    "native": 105,
+    "wasm-gc": 93,
+    "js": 93
+  },
+  "source_snapshot": {
+    "sha256": "026378feeaa6bf1d2e03d15f7918fb9bc237abd7142bcd4182e0a3f59808abf9",
+    "files": 62,
+    "method": "sorted git-tracked .mbt/.mbti/.py/.yml and moon.mod/moon.pkg; hash UTF-8 path + NUL + UTF-8 text with LF newlines + NUL"
+  },
+  "results": {
+    "dependencies": [
+      "moonbitlang/x@0.4.44"
+    ],
+    "go": "1.27.2",
+    "memory_example_runs": 3,
+    "packaged_consumer_tests": {
+      "native": 2,
+      "wasm-gc": 1,
+      "js": 1
+    },
+    "public_interface_synchronization": "pass",
+    "go_vector_idempotence": "pass",
+    "reference_by_target": {
+      "native": {
+        "go_reference": {
+          "consistency": 2529,
+          "inclusion": 2529,
+          "roots": 69
+        },
+        "negative_control": "passed",
+        "python_hashlib": {
+          "consistency": 2529,
+          "inclusion": 2529,
+          "roots": 69
+        },
+        "target": "native"
+      },
+      "wasm-gc": {
+        "go_reference": {
+          "consistency": 2529,
+          "inclusion": 2529,
+          "roots": 69
+        },
+        "negative_control": "passed",
+        "python_hashlib": {
+          "consistency": 2529,
+          "inclusion": 2529,
+          "roots": 69
+        },
+        "target": "wasm-gc"
+      },
+      "js": {
+        "go_reference": {
+          "consistency": 2529,
+          "inclusion": 2529,
+          "roots": 69
+        },
+        "negative_control": "passed",
+        "python_hashlib": {
+          "consistency": 2529,
+          "inclusion": 2529,
+          "roots": 69
+        },
+        "target": "js"
+      }
+    },
+    "expanded_by_target": {
+      "native": {
+        "target": "native",
+        "pinned_go_compact": {
+          "compact_ranges": 595,
+          "range_proofs": 6545
+        },
+        "negative_control": "passed"
+      },
+      "wasm-gc": {
+        "target": "wasm-gc",
+        "pinned_go_compact": {
+          "compact_ranges": 595,
+          "range_proofs": 6545
+        },
+        "negative_control": "passed"
+      },
+      "js": {
+        "target": "js",
+        "pinned_go_compact": {
+          "compact_ranges": 595,
+          "range_proofs": 6545
+        },
+        "negative_control": "passed"
+      }
+    },
+    "native_storage": {
+      "platform": "nt",
+      "cli_invocations_checked": 39,
+      "workflows": [
+        "persistent_event_log",
+        "interval_receipt",
+        "mergeable_shards"
+      ],
+      "real_writer_kill_recovery": {
+        "committed_leaves": 4096,
+        "root_verified": true
+      },
+      "scale": [
+        {
+          "leaves": 70000,
+          "batch_size": 1024,
+          "append_seconds": 0.9469,
+          "peak_rss_bytes": 10616832,
+          "store_bytes": 6720099,
+          "root_matches_independent_hashlib": true
+        },
+        {
+          "leaves": 140000,
+          "batch_size": 1024,
+          "append_seconds": 1.7969,
+          "peak_rss_bytes": 9547776,
+          "store_bytes": 13440099,
+          "root_matches_independent_hashlib": true
+        }
+      ],
+      "notes": "Sampled process memory and one timing run; no universal throughput or power-loss claim."
+    },
+    "native_backup": {
+      "cli_invocations_checked": 35,
+      "copy_matches_committed_files": true,
+      "historical_proofs_preserved": true,
+      "independent_append_after_restore": true,
+      "corrupt_source_refused_before_destination_created": true,
+      "existing_destinations_preserved": true,
+      "empty_backup_writable": true,
+      "large_payload_bytes": 18874368,
+      "large_copy_sha256_matches": true,
+      "incomplete_destination_refused": true,
+      "notes": "No physical power-loss or hostile concurrent file replacement guarantee."
+    },
+    "native_paths": {
+      "version": "0.3.1",
+      "source": "local source consumer; not a registry installation",
+      "relative_create_survives_chdir": true,
+      "relative_open_survives_chdir": true,
+      "same_named_other_log_unchanged": true,
+      "relative_backup_reopens_and_appends": true,
+      "unicode_paths": true,
+      "historical_consistency_verified": true
+    }
+  },
+  "steps": [
+    {
+      "step": "toolchain",
+      "exit_code": 0,
+      "log_sha256": "55021e14b7f88dd40c9606d0afedd9f573612075f664bd8ec55ef7d1adb9a313"
+    },
+    {
+      "step": "dependencies",
+      "exit_code": 0,
+      "log_sha256": "06b075e88f0b7a0eb69ac74f6b8f7c2b8b51cebbad1a5f88c1a9760a7cf881dc"
+    },
+    {
+      "step": "python",
+      "exit_code": 0,
+      "log_sha256": "829ac2581a6275b79e6369c6c1130807da7060f355fb83e37c8cb8ae5dc9b4cf"
+    },
+    {
+      "step": "node",
+      "exit_code": 0,
+      "log_sha256": "b8a527ca60b496131eccd1fcbeccf289ebc0a7e63be57e4b4c6f8f67648bcc07"
+    },
+    {
+      "step": "go",
+      "exit_code": 0,
+      "log_sha256": "6e82825b38971ac8a58d956a256c67b9b47c883d2d86dfbc31673223077e1e6a"
+    },
+    {
+      "step": "format",
+      "exit_code": 0,
+      "log_sha256": "cccf45e38b69c574db1d0feb3dffe07af905134c301b6fd2a0e3bd220f4797b1"
+    },
+    {
+      "step": "check_native",
+      "exit_code": 0,
+      "log_sha256": "be6763e9fa8284d9de3dae21483a2780aebf07d3b716d9b2689d7dd9c30a6c1e"
+    },
+    {
+      "step": "build_native",
+      "exit_code": 0,
+      "log_sha256": "4a7c131b0f375d1f1fa1bd50f43d31d31146f5e50ec360be2ad9582e0ed7c0b3"
+    },
+    {
+      "step": "test_native",
+      "exit_code": 0,
+      "log_sha256": "cbedd7f203daf31423b35d4181fdac08aae33bc74ddc9824ebe7526057063053"
+    },
+    {
+      "step": "memory_native",
+      "exit_code": 0,
+      "log_sha256": "3dacad91abf88555bf254e28830d5531cc64dbddb61e4f643fbf7df88c80404f"
+    },
+    {
+      "step": "reference_native",
+      "exit_code": 0,
+      "log_sha256": "172cdd4acecca15555153e9c55ee634f60d488d47a45f91d3ee5d4cfe216060b"
+    },
+    {
+      "step": "expanded_native",
+      "exit_code": 0,
+      "log_sha256": "20509183a10ec954abc7a939e992d8e1567814095f6f390148422daae89f423a"
+    },
+    {
+      "step": "consumer_native",
+      "exit_code": 0,
+      "log_sha256": "a68c5338e7a2f123c5c82c4c116070568371a2698c335e61cd3d05b135834c55"
+    },
+    {
+      "step": "check_wasm-gc",
+      "exit_code": 0,
+      "log_sha256": "04c6f5a3a16148516f093e062e2f23d507c6f15015bdda77716b74bc7d2d6913"
+    },
+    {
+      "step": "build_wasm-gc",
+      "exit_code": 0,
+      "log_sha256": "7f0193ce27a6c8b2306e1711db63736fdcc24d8c315f95851f20a7647ca0ae0e"
+    },
+    {
+      "step": "test_wasm-gc",
+      "exit_code": 0,
+      "log_sha256": "afaf61b898345f4cb6454a3c58065567d4b71373620449f1aea99ac9995bba66"
+    },
+    {
+      "step": "memory_wasm-gc",
+      "exit_code": 0,
+      "log_sha256": "3dacad91abf88555bf254e28830d5531cc64dbddb61e4f643fbf7df88c80404f"
+    },
+    {
+      "step": "reference_wasm-gc",
+      "exit_code": 0,
+      "log_sha256": "23038c59b025ace5e001fb2913bb3410a65d04c23e84f1862b8900b3f267f1ce"
+    },
+    {
+      "step": "expanded_wasm-gc",
+      "exit_code": 0,
+      "log_sha256": "784f3601f5b333dc6f98e10e61021d0988dd455be1e36c9d16fbb05aac1d8cb4"
+    },
+    {
+      "step": "consumer_wasm-gc",
+      "exit_code": 0,
+      "log_sha256": "ac6584737ec42998c25db8ab2f1a856243a4325d9be82a35733ebca4d0c5102b"
+    },
+    {
+      "step": "check_js",
+      "exit_code": 0,
+      "log_sha256": "04c6f5a3a16148516f093e062e2f23d507c6f15015bdda77716b74bc7d2d6913"
+    },
+    {
+      "step": "build_js",
+      "exit_code": 0,
+      "log_sha256": "35f735072c26c7fc100a386182b15b08b987d6d8cb9759e3c520153bba7e2b1f"
+    },
+    {
+      "step": "test_js",
+      "exit_code": 0,
+      "log_sha256": "afaf61b898345f4cb6454a3c58065567d4b71373620449f1aea99ac9995bba66"
+    },
+    {
+      "step": "memory_js",
+      "exit_code": 0,
+      "log_sha256": "3dacad91abf88555bf254e28830d5531cc64dbddb61e4f643fbf7df88c80404f"
+    },
+    {
+      "step": "reference_js",
+      "exit_code": 0,
+      "log_sha256": "abb18a126d63efe876c245751ad23aded10548a2309bee128fce2b995fcdd53a"
+    },
+    {
+      "step": "expanded_js",
+      "exit_code": 0,
+      "log_sha256": "e81288c5ee1764f9d42d0c8aaae2360b9401246307cd6e59a4d28a42ab1f7730"
+    },
+    {
+      "step": "consumer_js",
+      "exit_code": 0,
+      "log_sha256": "7141ffa3ddfa7c3d8ec2411a910610fa605c7980a78d14ed5a4fe9f836c64ee7"
+    },
+    {
+      "step": "storage",
+      "exit_code": 0,
+      "log_sha256": "d0a4335dac6106db325ac8a69e4962ecf0e77918dff8c4e0ee20662bb86869cf"
+    },
+    {
+      "step": "backup",
+      "exit_code": 0,
+      "log_sha256": "4b6d10390bd433aac1fccff7651e5bee4db4ea430077ab598d134b5c4d07cb48"
+    },
+    {
+      "step": "paths",
+      "exit_code": 0,
+      "log_sha256": "3fea03afd6fd38d1d65a74948b958c2500089f3874e2257e6a7d6018f18572e3"
+    },
+    {
+      "step": "repository",
+      "exit_code": 0,
+      "log_sha256": "5e87ec15a367b9db7f6f8d86d7029f89138f61902a7fa3872bfb443bb18cc35c"
+    },
+    {
+      "step": "regenerate_vectors",
+      "exit_code": 0,
+      "log_sha256": "433089c0c7dbe0886ce08032af5d6b4ad010a0a3bdceb8f2694042f0ccb28fa5"
+    },
+    {
+      "step": "interfaces",
+      "exit_code": 0,
+      "log_sha256": "70b3dd07f2f4b23024a1d173cf2da5b20d9fa378a0ad868a07cd5e6fd087f822"
+    },
+    {
+      "step": "final_format",
+      "exit_code": 0,
+      "log_sha256": "cccf45e38b69c574db1d0feb3dffe07af905134c301b6fd2a0e3bd220f4797b1"
+    }
+  ]
+}

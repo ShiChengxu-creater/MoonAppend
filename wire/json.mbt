@@ -1,7 +1,8 @@
 ///|
+#derive(Debug)
 pub(all) suberror WireError {
   WireError(String)
-} derive(Debug)
+}
 
 ///|
 pub extend WireError with @debug.Debug::{to_repr}
@@ -9,7 +10,7 @@ pub extend WireError with @debug.Debug::{to_repr}
 ///|
 priv struct Cursor {
   input : String
-  mut pos : Int
+  mut pos : Int32
 }
 
 ///|
@@ -21,7 +22,7 @@ fn Cursor::ws(self : Cursor) -> Unit {
 }
 
 ///|
-fn Cursor::take(self : Cursor, expected : Int) -> Unit raise WireError {
+fn Cursor::take(self : Cursor, expected : Int32) -> Unit raise WireError {
   self.ws()
   if self.pos >= self.input.length() ||
     self.input[self.pos].to_int() != expected {
@@ -31,7 +32,7 @@ fn Cursor::take(self : Cursor, expected : Int) -> Unit raise WireError {
 }
 
 ///|
-fn Cursor::peek(self : Cursor) -> Int {
+fn Cursor::peek(self : Cursor) -> Int32 {
   self.ws()
   if self.pos == self.input.length() {
     -1

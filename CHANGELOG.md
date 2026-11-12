@@ -1,5 +1,11 @@
 # Changes
 
+## Unreleased — toolchain maintenance (2026-11-12)
+
+- Migrate deprecated derives, optional argument declarations and integer spellings using the current official MoonBit formatter; regenerate public interfaces.
+- Replace the September-only CI toolchain pin with the current official release on Linux and Windows; add weekly checks and preserve actual version logs even after failure.
+- Record three-backend source/package, reference and native storage validation in `docs/TOOLCHAIN_COMPATIBILITY.md`. Package version remains 0.3.1; this maintenance does not publish a Mooncakes release.
+
 ## 0.3.1 — published 2026-10-27
 
 - Bind disk log directories to absolute paths when creating or opening them.

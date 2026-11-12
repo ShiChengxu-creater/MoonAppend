@@ -1,7 +1,8 @@
 ///|
 /// Invalid construction, bounds or resource request. Proof mismatch is a result.
+#derive(Eq, Debug)
 pub(all) suberror AppendError {
-  InvalidHashLength(Int)
+  InvalidHashLength(Int32)
   InvalidHex
   InvalidSize
   InvalidIndex
@@ -12,7 +13,7 @@ pub(all) suberror AppendError {
   InvalidRange
   NonContiguous
   InvalidCheckpoint
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend AppendError with Eq::{equal, not_equal}
@@ -22,9 +23,10 @@ pub extend AppendError with @debug.Debug::{to_repr}
 
 ///|
 /// A validated SHA-256 digest. Internal byte storage is not exposed.
+#derive(Eq, Debug)
 pub struct Hash32 {
   priv value : Bytes
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Hash32 with Eq::{equal, not_equal}
@@ -51,7 +53,7 @@ pub fn Hash32::hex(self : Hash32) -> String {
 }
 
 ///|
-fn hex_digit(unit : UInt16) -> Int {
+fn hex_digit(unit : UInt16) -> Int32 {
   let n = unit.to_int()
   if n >= 48 && n <= 57 {
     n - 48

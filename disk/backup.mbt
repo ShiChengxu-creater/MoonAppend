@@ -13,7 +13,7 @@ pub fn DiskLog::backup(
 fn DiskLog::backup_to(
   self : DiskLog,
   destination : String,
-  fault? : Int = 0,
+  fault~ : Int32 = 0,
 ) -> @tree.Snapshot raise Error {
   self.ready()
   if path_exists(destination) {

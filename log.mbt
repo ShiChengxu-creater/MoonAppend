@@ -3,13 +3,13 @@
 pub struct MemoryLog {
   priv limits : Limits
   priv levels : Array[Array[Hash32]]
-  priv mut count : Int
-  priv mut total_bytes : Int
+  priv mut count : Int32
+  priv mut total_bytes : Int32
 }
 
 ///|
 pub fn MemoryLog::new(
-  limits? : Limits = { leaves: 65536, bytes: 67108864, },
+  limits~ : Limits = { leaves: 65536, bytes: 67108864, },
 ) -> MemoryLog {
   { limits, levels: [[]], count: 0, total_bytes: 0, }
 }
@@ -20,7 +20,7 @@ pub fn MemoryLog::size(self : MemoryLog) -> UInt64 {
 }
 
 ///|
-pub fn MemoryLog::input_bytes(self : MemoryLog) -> Int {
+pub fn MemoryLog::input_bytes(self : MemoryLog) -> Int32 {
   self.total_bytes
 }
 

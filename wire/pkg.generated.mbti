@@ -34,9 +34,10 @@ pub fn hex_bytes(String) -> Bytes raise WireError
 pub fn parse_size(String) -> UInt64 raise WireError
 
 // Errors
+#derive(@debug.Debug)
 pub(all) suberror WireError {
   WireError(String)
-} derive(@debug.Debug)
+}
 pub fn WireError::to_repr(Self) -> @debug.Repr
 
 // Types and methods

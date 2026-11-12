@@ -1,12 +1,13 @@
 ///|
 /// Custom compact-range multiproof of one nonempty contiguous interval.
 /// Nodes are the canonical left gap followed by the canonical right gap.
+#derive(Eq, Debug)
 pub struct RangeProof {
   priv start : UInt64
   priv end : UInt64
   priv size : UInt64
   priv nodes : Array[Hash32]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend RangeProof with Eq::{equal, not_equal}
@@ -15,7 +16,7 @@ pub extend RangeProof with Eq::{equal, not_equal}
 pub extend RangeProof with @debug.Debug::{to_repr}
 
 ///|
-fn compact_count(start : UInt64, end : UInt64) -> Int {
+fn compact_count(start : UInt64, end : UInt64) -> Int32 {
   let mut position = start
   let mut count = 0
   while position < end {
@@ -66,7 +67,7 @@ pub fn range_from_reader(
   start : UInt64,
   end : UInt64,
   size : UInt64,
-  reader : (Int, UInt64) -> Hash32 raise Error,
+  reader : (Int32, UInt64) -> Hash32 raise Error,
 ) -> RangeProof raise Error {
   if start >= end || end > size || size > MAX_TREE_SIZE {
     raise InvalidRange

@@ -1,7 +1,8 @@
 ///|
+#derive(Debug)
 pub(all) suberror StorageError {
   StorageError(String)
-} derive(Debug)
+}
 
 ///|
 pub extend StorageError with @debug.Debug::{to_repr}
@@ -21,49 +22,49 @@ fn absolute_directory(path : String) -> String raise Error {
 
 ///|
 #borrow(path)
-extern "C" fn io_mkdir(path : Bytes) -> Int = "ma_mkdir"
+extern "C" fn io_mkdir(path : Bytes) -> Int32 = "ma_mkdir"
 
 ///|
 #borrow(path)
-extern "C" fn io_exists(path : Bytes) -> Int = "ma_exists"
+extern "C" fn io_exists(path : Bytes) -> Int32 = "ma_exists"
 
 ///|
 #borrow(path)
-extern "C" fn io_open(path : Bytes, mode : Int) -> Int = "ma_open"
+extern "C" fn io_open(path : Bytes, mode : Int32) -> Int32 = "ma_open"
 
 ///|
-extern "C" fn io_close(fd : Int) -> Int = "ma_close"
+extern "C" fn io_close(fd : Int32) -> Int32 = "ma_close"
 
 ///|
-extern "C" fn io_size(fd : Int) -> Int64 = "ma_size"
+extern "C" fn io_size(fd : Int32) -> Int64 = "ma_size"
 
 ///|
-extern "C" fn io_sync(fd : Int) -> Int = "ma_sync"
+extern "C" fn io_sync(fd : Int32) -> Int32 = "ma_sync"
 
 ///|
-extern "C" fn io_truncate(fd : Int, size : Int64) -> Int = "ma_truncate"
+extern "C" fn io_truncate(fd : Int32, size : Int64) -> Int32 = "ma_truncate"
 
 ///|
 #borrow(data)
 extern "C" fn io_read(
-  fd : Int,
+  fd : Int32,
   offset : Int64,
   data : FixedArray[Byte],
-  length : Int,
-) -> Int = "ma_read"
+  length : Int32,
+) -> Int32 = "ma_read"
 
 ///|
 #borrow(data)
 extern "C" fn io_write(
-  fd : Int,
+  fd : Int32,
   offset : Int64,
   data : Bytes,
-  length : Int,
-) -> Int = "ma_write"
+  length : Int32,
+) -> Int32 = "ma_write"
 
 ///|
 #borrow(dir, from, to)
-extern "C" fn io_replace(dir : Bytes, from : Bytes, to : Bytes) -> Int = "ma_replace"
+extern "C" fn io_replace(dir : Bytes, from : Bytes, to : Bytes) -> Int32 = "ma_replace"
 
 ///|
 fn path_bytes(path : String) -> Bytes raise StorageError {
@@ -74,7 +75,7 @@ fn path_bytes(path : String) -> Bytes raise StorageError {
 }
 
 ///|
-fn open_file(path : String, mode : Int) -> Int raise StorageError {
+fn open_file(path : String, mode : Int32) -> Int32 raise StorageError {
   let fd = io_open(path_bytes(path), mode)
   if fd < 0 {
     raise StorageError("OPEN_OR_LOCK_FAILED: \{path}")
@@ -83,7 +84,11 @@ fn open_file(path : String, mode : Int) -> Int raise StorageError {
 }
 
 ///|
-fn read_at(fd : Int, offset : UInt64, length : Int) -> Bytes raise StorageError {
+fn read_at(
+  fd : Int32,
+  offset : UInt64,
+  length : Int32,
+) -> Bytes raise StorageError {
   if offset > 9223372036854775807UL || length < 0 || length > 16777216 {
     raise StorageError("READ_LIMIT")
   }
@@ -96,7 +101,7 @@ fn read_at(fd : Int, offset : UInt64, length : Int) -> Bytes raise StorageError 
 
 ///|
 fn write_at(
-  fd : Int,
+  fd : Int32,
   offset : UInt64,
   value : Bytes,
 ) -> Unit raise StorageError {
@@ -116,7 +121,7 @@ fn put_u64(output : Array[Byte], value : UInt64) -> Unit {
 }
 
 ///|
-fn get_u64(data : Bytes, offset : Int) -> UInt64 {
+fn get_u64(data : Bytes, offset : Int32) -> UInt64 {
   let mut value = 0UL
   for i in 0..<8 {
     value = value | (data[offset + i].to_uint64() << (i * 8))

@@ -2,13 +2,13 @@
 /// Single writer, append-only file log. Call close explicitly to release its OS lock.
 pub struct DiskLog {
   priv path : String
-  priv files : Array[Int]
+  priv files : Array[Int32]
   priv mut state : @tree.CompactRange
   priv mut payload_end : UInt64
   priv recovered : UInt64
   priv mut closed : Bool
   priv mut poisoned : Bool
-  priv fault_stage : Ref[Int]
+  priv fault_stage : Ref[Int32]
 }
 
 ///|
@@ -30,7 +30,7 @@ fn commit_state(
   path : String,
   state : @tree.CompactRange,
   payload_end : UInt64,
-  fault? : Int = 0,
+  fault~ : Int32 = 0,
 ) -> Unit raise Error {
   let fd = open_file(path + "/state.tmp", 3)
   {
@@ -54,7 +54,7 @@ fn commit_state(
 }
 
 ///|
-fn open_files(path : String, create : Bool) -> Array[Int] raise Error {
+fn open_files(path : String, create : Bool) -> Array[Int32] raise Error {
   let opened = []
   errdefer (for fd in opened {
     ignore(io_close(fd))
@@ -196,7 +196,7 @@ pub fn DiskLog::recovered_bytes(self : DiskLog) -> UInt64 {
 ///|
 pub fn DiskLog::read_node(
   self : DiskLog,
-  level : Int,
+  level : Int32,
   index : UInt64,
 ) -> @tree.Hash32 raise Error {
   self.ready()

@@ -25,7 +25,9 @@ moon add ShiChengxu/moonappend@0.3.1
 
 ## 从源码运行
 
-工具链固定 `moon 0.1.20260920`、`moonc 0.10.14+7d59c7ec9`，依赖 `moonbitlang/x@0.4.44`。native 需要 C 编译环境，Windows 本地使用 MSVC，Linux CI 使用系统 C 工具链。JS 需要 Node.js。
+2026-11-12 源码维护已使用官方当前工具链 `moon 0.1.20261104`、`moonc v0.10.20+65efd5b93` 验证，依赖 `moonbitlang/x@0.4.44` 可继续使用。已迁移弃用语法并同步公开接口。CI 在推送、PR 和每周一使用官方当前工具链运行 Linux 三后端及 Windows native 检查，保存实际版本与验证附件。结果和复验命令见 [工具链兼容性记录](docs/TOOLCHAIN_COMPATIBILITY.md)。
+
+这次维护对应仓库源码；上面的 `0.3.1` 是现有 Mooncakes 发布版本。使用维护后的源码请安装官方当前工具链，旧工具链不在本次支持范围内。native 需要 C 编译环境，Windows 本地使用 MSVC，Linux CI 使用系统 C 工具链。JS 需要 Node.js。
 
 ```sh
 moon update

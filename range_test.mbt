@@ -49,9 +49,10 @@ test "reader-backed RFC proofs equal the existing in-memory generator" {
   for i in 0..<40 {
     ignore(log.append(Bytes::from_array([i.to_byte()][:])))
   }
-  let reader : (Int, UInt64) -> @moonappend.Hash32 raise Error = (level, index) => {
-    log.read_node(level, index)
-  }
+  let reader : (Int32, UInt64) -> @moonappend.Hash32 raise Error = (
+    level,
+    index,
+  ) => log.read_node(level, index)
   for size in 1..<=40 {
     let n = size.to_uint64()
     assert_eq(@moonappend.snapshot_from_reader(n, reader), log.snapshot_at(n))

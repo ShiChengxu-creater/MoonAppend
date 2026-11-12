@@ -1,9 +1,10 @@
 ///|
+#derive(Eq, Debug)
 pub struct ConsistencyProof {
   priv first : UInt64
   priv second : UInt64
   priv path : Array[Hash32]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend ConsistencyProof with Eq::{equal, not_equal}
@@ -44,9 +45,9 @@ pub fn ConsistencyProof::nodes(self : ConsistencyProof) -> Array[Hash32] {
 ///|
 fn MemoryLog::consistency_path(
   self : MemoryLog,
-  start : Int,
-  old_size : Int,
-  new_size : Int,
+  start : Int32,
+  old_size : Int32,
+  new_size : Int32,
   known_root : Bool,
   path : Array[Hash32],
 ) -> Unit {

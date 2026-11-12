@@ -1,9 +1,10 @@
 ///|
+#derive(Eq, Debug)
 pub struct InclusionProof {
   priv index : UInt64
   priv count : UInt64
   priv path : Array[Hash32]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend InclusionProof with Eq::{equal, not_equal}
@@ -45,9 +46,9 @@ pub fn InclusionProof::nodes(self : InclusionProof) -> Array[Hash32] {
 ///|
 fn MemoryLog::inclusion_path(
   self : MemoryLog,
-  start : Int,
-  count : Int,
-  index : Int,
+  start : Int32,
+  count : Int32,
+  index : Int32,
   path : Array[Hash32],
 ) -> Unit {
   if count == 1 {

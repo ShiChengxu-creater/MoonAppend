@@ -1,10 +1,11 @@
 ///|
 /// This result does not authenticate the supplied snapshots.
+#derive(Eq, Debug)
 pub(all) enum Verification {
   Verified
   Rejected(String)
   NoPriorHistory
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Verification with Eq::{equal, not_equal}

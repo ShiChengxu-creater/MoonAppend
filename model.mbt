@@ -3,10 +3,11 @@ pub const MAX_TREE_SIZE : UInt64 = 9223372036854775807UL
 
 ///|
 /// An unsigned, unauthenticated commitment. Trust is supplied by the caller.
+#derive(Eq, Debug)
 pub struct Snapshot {
   priv count : UInt64
   priv digest : Hash32
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Snapshot with Eq::{equal, not_equal}
@@ -38,14 +39,14 @@ pub fn Snapshot::root(self : Snapshot) -> Hash32 {
 ///|
 /// Generation limits may only tighten the absolute alpha caps.
 pub struct Limits {
-  priv leaves : Int
-  priv bytes : Int
+  priv leaves : Int32
+  priv bytes : Int32
 }
 
 ///|
 pub fn Limits::new(
-  max_leaves? : Int = 65536,
-  max_total_bytes? : Int = 67108864,
+  max_leaves~ : Int32 = 65536,
+  max_total_bytes~ : Int32 = 67108864,
 ) -> Limits raise AppendError {
   if max_leaves <= 0 ||
     max_leaves > 65536 ||
@@ -57,11 +58,11 @@ pub fn Limits::new(
 }
 
 ///|
-pub fn Limits::max_leaves(self : Limits) -> Int {
+pub fn Limits::max_leaves(self : Limits) -> Int32 {
   self.leaves
 }
 
 ///|
-pub fn Limits::max_total_bytes(self : Limits) -> Int {
+pub fn Limits::max_total_bytes(self : Limits) -> Int32 {
   self.bytes
 }

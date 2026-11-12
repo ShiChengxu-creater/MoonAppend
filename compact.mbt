@@ -1,11 +1,12 @@
 ///|
 /// Canonical maximal aligned perfect subtrees covering exactly [start, end).
 /// Hashes are unauthenticated until compared with an independently trusted root.
+#derive(Eq, Debug)
 pub struct CompactRange {
   priv start : UInt64
   priv end : UInt64
   priv nodes : Array[Hash32]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend CompactRange with Eq::{equal, not_equal}
@@ -45,7 +46,7 @@ pub fn CompactRange::new(
 
 ///|
 pub fn CompactRange::empty(
-  start? : UInt64 = 0UL,
+  start~ : UInt64 = 0UL,
 ) -> CompactRange raise AppendError {
   CompactRange::new(start, start, [])
 }
@@ -174,7 +175,7 @@ fn push_u64(output : Array[Byte], value : UInt64) -> Unit {
 }
 
 ///|
-fn read_u64(input : Bytes, offset : Int) -> UInt64 {
+fn read_u64(input : Bytes, offset : Int32) -> UInt64 {
   let mut value = 0UL
   for i in 0..<8 {
     value = value | (input[offset + i].to_uint64() << (i * 8))

@@ -3,6 +3,8 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: '43 2 * * 1'
 permissions:
   contents: read
 jobs:
@@ -27,17 +29,17 @@ jobs:
         with:
           go-version: '1.27.2'
           cache: false
-      - name: Install pinned MoonBit
+      - name: Install current official MoonBit
         shell: bash
         run: |
           set -euo pipefail
           curl --fail --silent --show-error --location https://cli.moonbitlang.com/install/unix.sh -o /tmp/install-moonbit.sh
-          bash /tmp/install-moonbit.sh '0.10.14+7d59c7ec9'
+          bash /tmp/install-moonbit.sh
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
-      - name: Verify toolchain
+      - name: Record current official toolchain
         run: |
-          moon version --all
-          moonc -v | grep -F 'v0.10.14+7d59c7ec9'
+          mkdir -p artifacts
+          moon version --all | tee artifacts/toolchain-${{ matrix.target }}.log
       - run: moon update
       - run: moon fmt --check
       - run: moon check --target ${{ matrix.target }} --deny-warn
@@ -73,9 +75,11 @@ jobs:
           git diff --exit-code
           test -z "$(git ls-files --others --exclude-standard)"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: reference-${{ matrix.target }}
           path: |
+            artifacts/toolchain-${{ matrix.target }}.log
             artifacts/reference-${{ matrix.target }}.json
             artifacts/expanded-${{ matrix.target }}.json
             artifacts/storage-cli-linux.json
@@ -95,22 +99,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install pinned MoonBit
+      - name: Install current official MoonBit
         shell: pwsh
-        env:
-          MOONBIT_INSTALL_VERSION: '0.10.14+7d59c7ec9'
         run: |
           Invoke-WebRequest https://cli.moonbitlang.com/install/powershell.ps1 -OutFile "$env:RUNNER_TEMP/install-moonbit.ps1"
           & "$env:RUNNER_TEMP/install-moonbit.ps1"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           "$env:USERPROFILE/.moon/bin" >> $env:GITHUB_PATH
-      - name: Verify toolchain
+      - name: Record current official toolchain
         shell: pwsh
         run: |
-          moon version --all
+          New-Item -ItemType Directory -Path artifacts -Force | Out-Null
+          moon version --all | Tee-Object -FilePath artifacts/toolchain-windows.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          $compilerVersion = moonc -v
-          if ($compilerVersion -notmatch 'v0\.10\.14\+7d59c7ec9') { throw "Unexpected compiler: $compilerVersion" }
       - run: moon update
       - run: moon fmt --check
       - run: moon check --target native --deny-warn
@@ -127,9 +128,11 @@ jobs:
       - name: Actual native package archive consumer
         run: python tools/verify_consumer.py --target native --package --out artifacts/package-consumer-windows.json
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: windows-native
           path: |
+            artifacts/toolchain-windows.log
             artifacts/storage-cli-windows.json
             artifacts/backup-windows.json
             artifacts/paths-windows.json

@@ -2,7 +2,7 @@
 /// A completed perfect subtree, addressed by its height and horizontal index.
 pub fn MemoryLog::read_node(
   self : MemoryLog,
-  level : Int,
+  level : Int32,
   index : UInt64,
 ) -> Hash32 raise AppendError {
   if level < 0 || level >= self.levels.length() {
@@ -19,7 +19,7 @@ pub fn MemoryLog::read_node(
 pub fn compact_from_reader(
   start : UInt64,
   end : UInt64,
-  read_node : (Int, UInt64) -> Hash32 raise Error,
+  read_node : (Int32, UInt64) -> Hash32 raise Error,
 ) -> CompactRange raise Error {
   if start > end || end > MAX_TREE_SIZE {
     raise InvalidRange
@@ -43,7 +43,7 @@ pub fn compact_from_reader(
 ///|
 pub fn snapshot_from_reader(
   size : UInt64,
-  read_node : (Int, UInt64) -> Hash32 raise Error,
+  read_node : (Int32, UInt64) -> Hash32 raise Error,
 ) -> Snapshot raise Error {
   compact_from_reader(0UL, size, read_node).snapshot()
 }
@@ -52,7 +52,7 @@ pub fn snapshot_from_reader(
 fn reader_root(
   start : UInt64,
   count : UInt64,
-  read_node : (Int, UInt64) -> Hash32 raise Error,
+  read_node : (Int32, UInt64) -> Hash32 raise Error,
 ) -> Hash32 raise Error {
   if count == 0UL {
     return empty_root()
@@ -87,7 +87,7 @@ fn reader_inclusion(
   start : UInt64,
   count : UInt64,
   index : UInt64,
-  reader : (Int, UInt64) -> Hash32 raise Error,
+  reader : (Int32, UInt64) -> Hash32 raise Error,
   output : Array[Hash32],
 ) -> Unit raise Error {
   if count == 1UL {
@@ -107,7 +107,7 @@ fn reader_inclusion(
 pub fn inclusion_from_reader(
   index : UInt64,
   size : UInt64,
-  reader : (Int, UInt64) -> Hash32 raise Error,
+  reader : (Int32, UInt64) -> Hash32 raise Error,
 ) -> InclusionProof raise Error {
   if size == 0UL || size > MAX_TREE_SIZE || index >= size {
     raise InvalidIndex
@@ -123,7 +123,7 @@ fn reader_consistency(
   old : UInt64,
   size : UInt64,
   known : Bool,
-  reader : (Int, UInt64) -> Hash32 raise Error,
+  reader : (Int32, UInt64) -> Hash32 raise Error,
   output : Array[Hash32],
 ) -> Unit raise Error {
   if old == size {
@@ -146,7 +146,7 @@ fn reader_consistency(
 pub fn consistency_from_reader(
   old : UInt64,
   size : UInt64,
-  reader : (Int, UInt64) -> Hash32 raise Error,
+  reader : (Int32, UInt64) -> Hash32 raise Error,
 ) -> ConsistencyProof raise Error {
   if old > size || size > MAX_TREE_SIZE {
     raise InvalidSize

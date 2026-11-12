@@ -10,7 +10,7 @@ pub fn path_exists(path : String) -> Bool raise StorageError {
 
 ///|
 /// Bounded file input for interchange tools; no whole-file read before size check.
-pub fn read_file(path : String, limit? : Int = 16777216) -> Bytes raise Error {
+pub fn read_file(path : String, limit~ : Int32 = 16777216) -> Bytes raise Error {
   if limit < 0 || limit > 16777216 {
     raise StorageError("READ_LIMIT")
   }

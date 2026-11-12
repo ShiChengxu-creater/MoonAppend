@@ -1,5 +1,5 @@
 ///|
-extern "C" fn exit_process(code : Int) -> Unit = "ma_cli_exit"
+extern "C" fn exit_process(code : Int32) -> Unit = "ma_cli_exit"
 
 ///|
 suberror CliError {
@@ -45,7 +45,7 @@ fn result(
 }
 
 ///|
-fn require_args(args : Array[String], count : Int) -> Unit raise CliError {
+fn require_args(args : Array[String], count : Int32) -> Unit raise CliError {
   if args.length() != count {
     raise CliError("ARGUMENT_COUNT: use --help")
   }

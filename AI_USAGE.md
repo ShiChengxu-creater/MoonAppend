@@ -1,5 +1,9 @@
 # AI-assisted development
 
+On 2026-11-12, Codex assisted with official-toolchain compatibility maintenance,
+formatter migrations, CI updates and recorded source/package verification.
+The maintenance record distinguishes those checks from registry publication.
+
 The participant used Codex to research public specifications and adjacent
 projects, implement the MoonBit core, design regression tests and independent
 reference adapters, draft documentation and configure CI. The participant is

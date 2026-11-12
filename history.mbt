@@ -1,6 +1,10 @@
 ///|
 /// RFC subranges either are complete aligned subtrees or split into such nodes.
-fn MemoryLog::range_root(self : MemoryLog, start : Int, count : Int) -> Hash32 {
+fn MemoryLog::range_root(
+  self : MemoryLog,
+  start : Int32,
+  count : Int32,
+) -> Hash32 {
   if count == 0 {
     return empty_root()
   }

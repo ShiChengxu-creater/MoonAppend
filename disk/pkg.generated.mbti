@@ -11,14 +11,15 @@ pub const MAX_DISK_LEAVES : UInt64 = 72057594037927935
 
 pub fn path_exists(String) -> Bool raise StorageError
 
-pub fn read_file(String, limit? : Int) -> Bytes raise
+pub fn read_file(String, limit? : Int32) -> Bytes raise
 
 pub fn write_new_file(String, Bytes) -> Unit raise
 
 // Errors
+#derive(@debug.Debug)
 pub(all) suberror StorageError {
   StorageError(String)
-} derive(@debug.Debug)
+}
 pub fn StorageError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
@@ -36,7 +37,7 @@ pub fn DiskLog::prove_consistency(Self, UInt64, UInt64) -> @moonappend.Consisten
 pub fn DiskLog::prove_inclusion(Self, UInt64, UInt64) -> @moonappend.InclusionProof raise
 pub fn DiskLog::prove_range(Self, UInt64, UInt64, UInt64) -> @moonappend.RangeProof raise
 pub fn DiskLog::read_entry(Self, UInt64) -> Bytes raise
-pub fn DiskLog::read_node(Self, Int, UInt64) -> @moonappend.Hash32 raise
+pub fn DiskLog::read_node(Self, Int32, UInt64) -> @moonappend.Hash32 raise
 pub fn DiskLog::recovered_bytes(Self) -> UInt64
 pub fn DiskLog::snapshot(Self) -> @moonappend.Snapshot raise
 pub fn DiskLog::snapshot_at(Self, UInt64) -> @moonappend.Snapshot raise

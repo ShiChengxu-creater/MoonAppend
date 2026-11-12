@@ -8,9 +8,9 @@ import {
 // Values
 pub const MAX_TREE_SIZE : UInt64 = 9223372036854775807
 
-pub fn compact_from_reader(UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> CompactRange raise
+pub fn compact_from_reader(UInt64, UInt64, (Int32, UInt64) -> Hash32 raise) -> CompactRange raise
 
-pub fn consistency_from_reader(UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> ConsistencyProof raise
+pub fn consistency_from_reader(UInt64, UInt64, (Int32, UInt64) -> Hash32 raise) -> ConsistencyProof raise
 
 pub fn empty_root() -> Hash32
 
@@ -18,11 +18,11 @@ pub fn hash_leaf(Bytes) -> Hash32
 
 pub fn hash_node(Hash32, Hash32) -> Hash32
 
-pub fn inclusion_from_reader(UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> InclusionProof raise
+pub fn inclusion_from_reader(UInt64, UInt64, (Int32, UInt64) -> Hash32 raise) -> InclusionProof raise
 
-pub fn range_from_reader(UInt64, UInt64, UInt64, (Int, UInt64) -> Hash32 raise) -> RangeProof raise
+pub fn range_from_reader(UInt64, UInt64, UInt64, (Int32, UInt64) -> Hash32 raise) -> RangeProof raise
 
-pub fn snapshot_from_reader(UInt64, (Int, UInt64) -> Hash32 raise) -> Snapshot raise
+pub fn snapshot_from_reader(UInt64, (Int32, UInt64) -> Hash32 raise) -> Snapshot raise
 
 pub fn tree_root(Array[Bytes], limits? : Limits) -> Hash32 raise AppendError
 
@@ -33,8 +33,9 @@ pub fn verify_inclusion(Snapshot, UInt64, Bytes, InclusionProof) -> Verification
 pub fn verify_range(Snapshot, UInt64, Array[Bytes], RangeProof) -> Verification
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub(all) suberror AppendError {
-  InvalidHashLength(Int)
+  InvalidHashLength(Int32)
   InvalidHex
   InvalidSize
   InvalidIndex
@@ -45,15 +46,16 @@ pub(all) suberror AppendError {
   InvalidRange
   NonContiguous
   InvalidCheckpoint
-} derive(Eq, @debug.Debug)
+}
 pub fn AppendError::equal(Self, Self) -> Bool
 pub fn AppendError::not_equal(Self, Self) -> Bool
 pub fn AppendError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub struct CompactRange {
   // private fields
-} derive(Eq, @debug.Debug)
+}
 pub fn CompactRange::append(Self, Bytes) -> Self raise AppendError
 pub fn CompactRange::append_hash(Self, Hash32) -> Self raise AppendError
 pub fn CompactRange::checkpoint(Self) -> Bytes
@@ -70,9 +72,10 @@ pub fn CompactRange::snapshot(Self) -> Snapshot raise AppendError
 pub fn CompactRange::start(Self) -> UInt64
 pub fn CompactRange::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub struct ConsistencyProof {
   // private fields
-} derive(Eq, @debug.Debug)
+}
 pub fn ConsistencyProof::equal(Self, Self) -> Bool
 pub fn ConsistencyProof::new(UInt64, UInt64, Array[Hash32]) -> Self raise AppendError
 pub fn ConsistencyProof::new_size(Self) -> UInt64
@@ -81,9 +84,10 @@ pub fn ConsistencyProof::not_equal(Self, Self) -> Bool
 pub fn ConsistencyProof::old_size(Self) -> UInt64
 pub fn ConsistencyProof::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub struct Hash32 {
   // private fields
-} derive(Eq, @debug.Debug)
+}
 pub fn Hash32::bytes(Self) -> Bytes
 pub fn Hash32::equal(Self, Self) -> Bool
 pub fn Hash32::from_bytes(Bytes) -> Self raise AppendError
@@ -92,9 +96,10 @@ pub fn Hash32::hex(Self) -> String
 pub fn Hash32::not_equal(Self, Self) -> Bool
 pub fn Hash32::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub struct InclusionProof {
   // private fields
-} derive(Eq, @debug.Debug)
+}
 pub fn InclusionProof::equal(Self, Self) -> Bool
 pub fn InclusionProof::leaf_index(Self) -> UInt64
 pub fn InclusionProof::new(UInt64, UInt64, Array[Hash32]) -> Self raise AppendError
@@ -106,28 +111,29 @@ pub fn InclusionProof::tree_size(Self) -> UInt64
 pub struct Limits {
   // private fields
 }
-pub fn Limits::max_leaves(Self) -> Int
-pub fn Limits::max_total_bytes(Self) -> Int
-pub fn Limits::new(max_leaves? : Int, max_total_bytes? : Int) -> Self raise AppendError
+pub fn Limits::max_leaves(Self) -> Int32
+pub fn Limits::max_total_bytes(Self) -> Int32
+pub fn Limits::new(max_leaves? : Int32, max_total_bytes? : Int32) -> Self raise AppendError
 
 pub struct MemoryLog {
   // private fields
 }
 pub fn MemoryLog::append(Self, Bytes) -> UInt64 raise AppendError
 pub fn MemoryLog::append_batch(Self, Array[Bytes]) -> Snapshot raise AppendError
-pub fn MemoryLog::input_bytes(Self) -> Int
+pub fn MemoryLog::input_bytes(Self) -> Int32
 pub fn MemoryLog::new(limits? : Limits) -> Self
 pub fn MemoryLog::prove_consistency(Self, UInt64, UInt64) -> ConsistencyProof raise AppendError
 pub fn MemoryLog::prove_inclusion(Self, UInt64, UInt64) -> InclusionProof raise AppendError
 pub fn MemoryLog::prove_range(Self, UInt64, UInt64, UInt64) -> RangeProof raise
-pub fn MemoryLog::read_node(Self, Int, UInt64) -> Hash32 raise AppendError
+pub fn MemoryLog::read_node(Self, Int32, UInt64) -> Hash32 raise AppendError
 pub fn MemoryLog::size(Self) -> UInt64
 pub fn MemoryLog::snapshot(Self) -> Snapshot
 pub fn MemoryLog::snapshot_at(Self, UInt64) -> Snapshot raise AppendError
 
+#derive(Eq, @debug.Debug)
 pub struct RangeProof {
   // private fields
-} derive(Eq, @debug.Debug)
+}
 pub fn RangeProof::end(Self) -> UInt64
 pub fn RangeProof::equal(Self, Self) -> Bool
 pub fn RangeProof::new(UInt64, UInt64, UInt64, Array[Hash32]) -> Self raise AppendError
@@ -137,9 +143,10 @@ pub fn RangeProof::start(Self) -> UInt64
 pub fn RangeProof::to_repr(Self) -> @debug.Repr
 pub fn RangeProof::tree_size(Self) -> UInt64
 
+#derive(Eq, @debug.Debug)
 pub struct Snapshot {
   // private fields
-} derive(Eq, @debug.Debug)
+}
 pub fn Snapshot::equal(Self, Self) -> Bool
 pub fn Snapshot::new(UInt64, Hash32) -> Self raise AppendError
 pub fn Snapshot::not_equal(Self, Self) -> Bool
@@ -147,11 +154,12 @@ pub fn Snapshot::root(Self) -> Hash32
 pub fn Snapshot::size(Self) -> UInt64
 pub fn Snapshot::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Verification {
   Verified
   Rejected(String)
   NoPriorHistory
-} derive(Eq, @debug.Debug)
+}
 pub fn Verification::code(Self) -> String
 pub fn Verification::equal(Self, Self) -> Bool
 pub fn Verification::is_verified(Self) -> Bool
