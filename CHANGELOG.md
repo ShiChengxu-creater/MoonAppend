@@ -1,10 +1,11 @@
 # Changes
 
-## 0.3.2 — toolchain compatibility (2026-11-14)
+## 0.3.2 — published 2026-11-14
 
 - Migrate deprecated derives, optional argument declarations and integer spellings using the current official MoonBit formatter; regenerate public interfaces.
 - Replace the September-only CI toolchain pin with the current official release on Linux and Windows; add weekly checks and preserve actual version logs even after failure.
 - Record three-backend source/package, reference and native storage validation in `docs/TOOLCHAIN_COMPATIBILITY.md`; package the verified maintenance as 0.3.2.
+- Publish to Mooncakes and verify exact-version three-backend public APIs plus native disk, backup, working-directory and Unicode-path regressions without a workspace override.
 
 ## 0.3.1 — published 2026-10-27
 

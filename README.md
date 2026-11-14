@@ -2,7 +2,7 @@
 
 MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节点，支持进程重启后继续追加、历史快照、批量提交，以及包含、一致性和连续区间证明。还提供可合并的 compact range，用少量哈希完成分片构树和状态恢复。
 
-当前维护版本为 **0.3.2**，更新当前 MoonBit 工具链兼容性，并保留 0.3.1 的相对路径修复、审计备份和历史证明能力。兼容性检查见 [docs/TOOLCHAIN_COMPATIBILITY.md](docs/TOOLCHAIN_COMPATIBILITY.md)；路径问题和回归说明见 [docs/PATH_FIX.md](docs/PATH_FIX.md)。
+当前版本 **[0.3.2](https://mooncakes.io/docs/ShiChengxu/moonappend@0.3.2)** 已发布到 Mooncakes，更新当前 MoonBit 工具链兼容性，并保留 0.3.1 的相对路径修复、审计备份和历史证明能力。发布提交、校验和与复验结果见 [发布记录](docs/RELEASE_0.3.2.md)；路径问题见 [docs/PATH_FIX.md](docs/PATH_FIX.md)。
 
 在调用方模块中安装：
 
@@ -10,7 +10,7 @@ MoonAppend 是 MoonBit 的有序追加日志库。它保存记录和 Merkle 节�
 moon add ShiChengxu/moonappend@0.3.2
 ```
 
-历史 0.3.1 注册表复验包括 native 4 个、wasm-gc 和 JS 各 2 个公开 API 测试，覆盖区间、JSON、分片状态、native 磁盘重开、备份及副本独立追加。另从注册表安装后验证了相对路径创建、打开和备份在切换工作目录后保持正确。结果见 [发布验证记录](docs/evidence/registry-0.3.1.json)与[路径发布验证](docs/evidence/registry-paths-0.3.1.json)。历史终验记录见 [FINAL_ACCEPTANCE.md](FINAL_ACCEPTANCE.md)。
+0.3.2 注册表复验包括 native 4 个、wasm-gc 和 JS 各 2 个公开 API 测试，覆盖区间、JSON、分片状态、native 磁盘重开、备份及副本独立追加。另从注册表安装后验证了相对路径创建、打开和备份在切换工作目录后保持正确。结果见 [发布验证记录](docs/evidence/registry-0.3.2.json)与[路径发布验证](docs/evidence/registry-paths-0.3.2.json)。历史终验记录见 [FINAL_ACCEPTANCE.md](FINAL_ACCEPTANCE.md)。
 
 ## 模块
 
@@ -80,7 +80,7 @@ assert_true(@tree.verify_range(head, 1UL, [b"two", b"three"], proof).is_verified
 
 ## 验证与规模记录
 
-0.3.1 源码本地通过 native **105** 个测试块，wasm-gc、JS 各 **93** 个，以及工作目录切换回归、原有存储/备份流程和三后端真实 ZIP 消费者。功能提交的 Linux/Windows CI 已通过，见 [路径修复记录](docs/PATH_FIX.md)。0.3.0 的历史参考、测试及注册表结果单独保留，测试数量不是覆盖率。
+0.3.2 源码本地通过 native **105** 个测试块，wasm-gc、JS 各 **93** 个，以及工作目录切换回归、原有存储/备份流程和三后端真实 ZIP 消费者。发布提交的 Linux/Windows CI 已通过，见 [发布记录](docs/RELEASE_0.3.2.md)。0.3.0 的历史参考、测试及注册表结果单独保留，测试数量不是覆盖率。
 
 ```sh
 moon fmt --check
